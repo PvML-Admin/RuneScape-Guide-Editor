@@ -1,51 +1,99 @@
-.d-emoji {
-    display: inline;    /* added to make sure emojis aren't on a new page */
-    object-fit: contain;
-    width: 1.320em;
-    height: 1.320em;
-    vertical-align: middle; /* discord css is bottom but middle looks better */
+/* Discord emoji styling - maximum specificity to override all Discord CSS rules */
+.message-group img.d-emoji,
+.message-group.compact img.d-emoji,
+.message-group .comment img.d-emoji,
+.message-group .comment .markup img.d-emoji,
+.discord-view img.d-emoji,
+.discord-view .message-group img.d-emoji,
+img.d-emoji,
+img[src*='cdn.discordapp.com/emojis/'] {
+  display: inline !important; /* added to make sure emojis aren't on a new page */
+  object-fit: contain !important;
+  width: 1.32em !important;
+  height: 1.32em !important;
+  max-width: 1.32em !important; /* override Tailwind's max-width: 100% */
+  max-height: 1.32em !important;
+  vertical-align: middle !important; /* discord css is bottom but middle looks better */
+  margin: 0 0.05em 0 0.1em !important;
+  border: none !important;
+  border-radius: 0 !important;
+  position: static !important;
+  float: none !important;
+}
+
+/* Also target any emoji-related classes that might exist */
+.emoji,
+.message-group .emoji,
+.message-group.compact .emoji {
+  display: inline !important;
+  width: 1.32em !important;
+  height: 1.32em !important;
+  max-width: 1.32em !important;
+  max-height: 1.32em !important;
+  vertical-align: middle !important;
+  margin: 0 0.05em 0 0.1em !important;
 }
 
 .blockquoteContainer {
-    display: flex;
+  display: flex;
 }
 
 .blockquoteDivider {
-    background-color: rgb(79 84 92);
+  background-color: rgb(79 84 92);
 }
 
 .blockquoteContainer .blockquoteDivider {
-    width: 4px;
-    border-radius: 4px;
+  width: 4px;
+  border-radius: 4px;
 }
 
 .blockquoteContainer blockquote {
-    padding: 0 8px 0 12px;
-    box-sizing: border-box;
-    text-indent: 0;
+  padding: 0 8px 0 12px;
+  box-sizing: border-box;
+  text-indent: 0;
 }
 
 .d-mention {
-    border-radius: 3px;
-    padding: 0px;
-    color: hsl(236,83.3%,92.9%);
-    background: hsla(235,85.6%,64.7%,0.3);
+  border-radius: 3px;
+  padding: 0px;
+  color: hsl(236, 83.3%, 92.9%);
+  background: hsla(235, 85.6%, 64.7%, 0.3);
 }
 
 .message-group .comment .markup span {
-    display: inline-block;
-    vertical-align: bottom;
-    padding: 0px;
+  display: inline-block;
+  vertical-align: bottom;
+  padding: 0px;
 }
 
 .message-group .comment .markup code.inline {
-    display: inline-block !important;
-    vertical-align: middle !important;
+  display: inline-block !important;
+  vertical-align: middle !important;
 }
 
 .media {
-    max-width: 560px !important;
-    max-height: 400px;
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
+  max-width: 560px !important;
+  max-height: 400px;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Discord subtext styling (-# markdown) */
+.discord-subtext {
+  color: #72767d !important;
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  line-height: 1.375 !important;
+  margin: 4px 0 8px 0 !important;
+}
+
+/* Ensure subtext styling applies in all contexts */
+.message-group .comment .markup .discord-subtext,
+.message-group .markup .discord-subtext,
+.markup .discord-subtext {
+  color: #72767d !important;
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  line-height: 1.375 !important;
+  margin: 4px 0 8px 0 !important;
 }
