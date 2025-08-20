@@ -1,78 +1,76 @@
 <script>
-    import Message from './Message.svelte';
-    import Avatar from './Avatar.svelte';
-    import Bot from './Bot.svelte';
+  import Message from './Message.svelte'
+  import Avatar from './Avatar.svelte'
+  import Bot from './Bot.svelte'
 
-    import { onMount, afterUpdate } from 'svelte';
+  import { onMount, afterUpdate } from 'svelte'
 
+  export let text
+  export let scrollBottom = false
+  let scrollViewElement
 
-    export let text;
-    export let scrollBottom = false;
-    let scrollViewElement;
+  onMount(() => {
+    scrollViewElement = document.getElementById('scroll-view')
+  })
 
-    onMount(()=>{
-        scrollViewElement = document.getElementById('scroll-view');
-    });
+  afterUpdate(() => {
+    if (scrollBottom)
+      scrollViewElement.scrollTop = scrollViewElement.scrollHeight
+  })
 
-    afterUpdate(() => {
-        if (scrollBottom) scrollViewElement.scrollTop = scrollViewElement.scrollHeight;
-    });
-
-    function splitMessages(text) {
-        // todo: ignore commands inside code block
-        let messages = [];
-        let message = {
-            content: '',
-            command: ''
-        };
-        const lines = text.split('\n');
-        for (const line of lines) {
-            if (message.content !== '') message.content += '\n';
-
-            if (line.startsWith('..')) {
-                message.content += line.substring(1);
-            }
-            else if (line.startsWith('.')) {
-                message.command = line
-                messages.push(message);
-                message = {
-                    content: '',
-                    command: ''
-                };
-            }
-            else {
-                message.content += line;
-            }
-        }
-
-        if (message.content !== '') messages.push(message);
-
-        return messages;
+  function splitMessages(text) {
+    // todo: ignore commands inside code block
+    let messages = []
+    let message = {
+      content: '',
+      command: ''
     }
+    const lines = text.split('\n')
+    for (const line of lines) {
+      if (message.content !== '') message.content += '\n'
+
+      if (line.startsWith('..')) {
+        message.content += line.substring(1)
+      } else if (line.startsWith('.')) {
+        message.command = line
+        messages.push(message)
+        message = {
+          content: '',
+          command: ''
+        }
+      } else {
+        message.content += line
+      }
+    }
+
+    if (message.content !== '') messages.push(message)
+
+    return messages
+  }
 </script>
 
-<div class='discord-view'>
-    <div class='flex-vertical whitney theme-dark'>
-        <div class='chat flex-vertical flex-spacer'>
-            <div class='content flex-spacer flex-horizontal'>
-                <div class='flex-spacer flex-vertical messages-wrapper'>
-                    <div class='scroller-wrap'>
-                        <div class='scroller messages'>
-                            <div class='message-group hide-overflow min-h-screen'>
-                                <Avatar/>
-                                <div class='comment'>
-                                    <div class='message first'>
-                                        <Bot/>
-                                        {#each splitMessages(text) as message}
-                                            <Message {...message}/>
-                                        {/each}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+<div class="discord-view">
+  <div class="flex-vertical whitney theme-dark">
+    <div class="chat flex-vertical flex-spacer">
+      <div class="content flex-spacer flex-horizontal">
+        <div class="flex-spacer flex-vertical messages-wrapper">
+          <div class="scroller-wrap">
+            <div class="scroller messages">
+              <div class="message-group hide-overflow min-h-screen">
+                <Avatar />
+                <div class="comment">
+                  <div class="message first">
+                    <Bot />
+                    {#each splitMessages(text) as message}
+                      <Message {...message} />
+                    {/each}
+                  </div>
                 </div>
+              </div>
             </div>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 </div>

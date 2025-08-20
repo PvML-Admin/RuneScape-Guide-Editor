@@ -1,7 +1,9 @@
 <script>
-    import markdownToHTML from "./../../markdown";
+  import markdownToHTML from './../../markdown'
 
-    export let content;
+  export let content
 </script>
 
-<div class='embed-description markup'>{@html markdownToHTML(content).content}</div>
+<div class="embed-description markup">
+  {@html markdownToHTML(content).content}
+</div>

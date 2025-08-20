@@ -1,11 +1,11 @@
 <script>
-    import EmbedField from "./EmbedField.svelte";
-    
-    export let fields;
+  import EmbedField from './EmbedField.svelte'
+
+  export let fields
 </script>
 
-<div class='embed-fields'>
-    {#each fields as field}
-        <EmbedField {...field} />
-    {/each}
+<div class="embed-fields">
+  {#each fields as field}
+    <EmbedField {...field} />
+  {/each}
 </div>
