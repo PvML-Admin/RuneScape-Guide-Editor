@@ -61,10 +61,10 @@
                 <div class="comment">
                   <div class="message first">
                     <Bot />
-                    {#each splitMessages(text) as message}
-                      <Message {...message} />
-                    {/each}
                   </div>
+                  {#each splitMessages(text) as message}
+                    <Message {...message} />
+                  {/each}
                 </div>
               </div>
             </div>

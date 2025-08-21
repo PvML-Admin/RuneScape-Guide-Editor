@@ -52,29 +52,7 @@
 
     const { content: htmlContent } = markdownToHTML(processedContent)
 
-    // Post-process to handle Discord subtext after markdown conversion
-    // Try multiple patterns to catch different HTML structures
-    let finalContent = htmlContent
-
-    // Pattern 1: <p>-# content</p>
-    finalContent = finalContent.replace(
-      /<p>-#\s+(.+?)<\/p>/g,
-      '<div class="discord-subtext">$1</div>'
-    )
-
-    // Pattern 2: Direct -# in text (no wrapping)
-    finalContent = finalContent.replace(
-      /^-#\s+(.+)$/gm,
-      '<div class="discord-subtext">$1</div>'
-    )
-
-    // Pattern 3: -# anywhere in the content
-    finalContent = finalContent.replace(
-      /-#\s+([^\n<]+)/g,
-      '<div class="discord-subtext">$1</div>'
-    )
-
-    return finalContent // Already sanitized by markdownToHTML
+    return htmlContent // Already sanitized by markdownToHTML and subtext formatting is handled in markdownToHTML
   }
 
   /**
@@ -298,6 +276,48 @@
               {/each}
             </div>
           </div>
+        {:else if component.type === 2}
+          <!-- Standalone Button Component -->
+          <div class="component-block">
+            <div class="discord-action-row">
+              <button
+                class="discord-button discord-button-style-{component.style || 2}"
+                disabled
+                title="Custom ID: {component.custom_id || 'No ID'}"
+              >
+                {#if component.emoji && component.emoji.name}
+                  <span class="button-emoji">{component.emoji.name}</span>
+                {/if}
+                {component.label || 'Button'}
+              </button>
+            </div>
+          </div>
+        {:else if component.type === 3}
+          <!-- Standalone Select Menu Component -->
+          <div class="component-block">
+            <div class="discord-select-container">
+              <select
+                class="discord-select"
+                disabled
+                title="Custom ID: {component.custom_id || 'No ID'}"
+              >
+                <option
+                  >{component.placeholder || 'Select an option...'}</option
+                >
+                {#each component.options || [] as option}
+                  <option
+                    value={option.value}
+                    title={option.description || ''}
+                  >
+                    {#if option.emoji && option.emoji.name}
+                      {option.emoji.name}
+                    {/if}
+                    {option.label || 'Option'}
+                  </option>
+                {/each}
+              </select>
+            </div>
+          </div>
         {:else if component.type === 14}
           <!-- Spacer Component -->
           <div class="component-spacer" data-spacing={component.spacing}></div>
@@ -331,7 +351,7 @@
     border-left: 4px solid #5865f2;
     border-radius: 4px;
     padding: 16px;
-    margin: 8px 0;
+    margin: 5px 0;
     max-width: 650px; /* Middle ground between narrow and wide to match Discord's dynamic sizing */
     width: 100%;
     min-width: 480px; /* Adjusted minimum width based on Discord's responsive behavior */

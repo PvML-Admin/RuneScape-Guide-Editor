@@ -10,7 +10,6 @@
   let copyPromise = null
 
   async function copyToClipboard() {
-    await new Promise((r) => setTimeout(r, 400))
     try {
       // @ts-ignore - Flowbite may not be properly typed
       const Dropdown = window.Flowbite?.Dropdown || window.Dropdown
@@ -113,7 +112,7 @@
   data-dropdown-toggle="ToCInformation"
   on:click={generateCompactToC}
   type="button"
-  class="inline-flex items-center rounded bg-indigo-600 hover:bg-indigo-700 text-white px-2 py-2 active:bg-indigo-800 text-sm border border-indigo-700"
+  class="inline-flex items-center rounded bg-gray-700 hover:bg-gray-600 text-white px-2 py-2 active:bg-gray-800 text-sm border border-gray-600"
   title="Create table of contents"
 >
   Table of contents&nbsp;<CaretDownFill class="mt-1"></CaretDownFill>
@@ -130,7 +129,7 @@
       <button
         title="Compact"
         on:click={() => generateCompactToC()}
-        class="rounded-t flex-wrap text-left bg-indigo-600 hover:bg-indigo-700 p-2 active:bg-indigo-800 border border-indigo-700"
+        class="rounded-t flex-wrap text-left bg-gray-700 hover:bg-gray-600 p-2 active:bg-gray-800 border border-gray-600"
         type="button"
       >
         Compact
@@ -138,7 +137,7 @@
       <button
         title="Style guide"
         on:click={() => generateCategorizedToC()}
-        class="rounded-b flex-wrap text-left bg-indigo-600 hover:bg-indigo-700 p-2 active:bg-indigo-800 border border-indigo-700"
+        class="rounded-b flex-wrap text-left bg-gray-700 hover:bg-gray-600 p-2 active:bg-gray-800 border border-gray-600"
         type="button"
       >
         Categorized

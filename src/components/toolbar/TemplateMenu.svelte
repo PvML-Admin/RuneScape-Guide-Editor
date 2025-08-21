@@ -98,7 +98,7 @@
   id="TemplateButton"
   data-dropdown-toggle="TemplateInformation"
   type="button"
-  class="inline-flex items-center rounded bg-indigo-600 hover:bg-indigo-700 text-white px-2 py-2 active:bg-indigo-800 text-sm border border-indigo-700"
+  class="inline-flex items-center rounded bg-gray-700 hover:bg-gray-600 text-white px-2 py-2 active:bg-gray-800 text-sm border border-gray-600"
   title="Templates"
 >
   Template&nbsp;<CaretDownFill class="mt-1"></CaretDownFill>
@@ -115,7 +115,7 @@
       <button
         title="Embed formatting"
         on:click={() => (templateText = embedTextFormatting)}
-        class="flex-wrap text-left bg-indigo-600 hover:bg-indigo-700 p-2 active:bg-indigo-800 border border-indigo-700"
+        class="flex-wrap text-left bg-gray-700 hover:bg-gray-600 p-2 active:bg-gray-800 border border-gray-600"
         type="button"
       >
         Embed formatting
@@ -123,7 +123,7 @@
       <button
         title="Components V2 example"
         on:click={() => (templateText = componentsV2Example)}
-        class="flex-wrap text-left bg-indigo-600 hover:bg-indigo-700 p-2 active:bg-indigo-800 border border-indigo-700"
+        class="flex-wrap text-left bg-gray-700 hover:bg-gray-600 p-2 active:bg-gray-800 border border-gray-600"
         type="button"
       >
         Components V2

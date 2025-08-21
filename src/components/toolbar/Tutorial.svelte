@@ -1,6 +1,33 @@
 <script>
   import QuestionCircle from 'svelte-bootstrap-icons/lib/QuestionCircle.svelte'
   import { onMount } from 'svelte'
+  import { activeDropdown } from '../../stores'
+
+  const DROPDOWN_ID = 'TutorialOptions'
+  
+  // Reactive statement to track if this dropdown is active
+  $: isDropdownOpen = $activeDropdown === DROPDOWN_ID
+
+  // Track dropdown state
+  function handleDropdownToggle(event) {
+    // Prevent Flowbite from interfering with our state management
+    event.preventDefault()
+    event.stopPropagation()
+    
+    if ($activeDropdown === DROPDOWN_ID) {
+      activeDropdown.set(null)
+    } else {
+      activeDropdown.set(DROPDOWN_ID)
+    }
+  }
+
+  function handleDropdownShow() {
+    activeDropdown.set(DROPDOWN_ID)
+  }
+
+  function handleDropdownHide() {
+    activeDropdown.set(null)
+  }
 
   onMount(async () => {
     document.addEventListener('DOMContentLoaded', (_event) => {
@@ -16,8 +43,9 @@
   id="TutorialButton"
   data-dropdown-toggle="TutorialOptions"
   type="button"
-  class="inline-flex items-center rounded bg-indigo-600 hover:bg-indigo-700 text-white px-2 py-2 active:bg-indigo-800 text-sm border border-indigo-700"
+  class="inline-flex items-center rounded {isDropdownOpen ? 'bg-blue-600 ring-2 ring-blue-400' : 'bg-gray-700'} hover:bg-gray-600 text-white px-2 py-2 active:bg-gray-800 text-sm border border-gray-600"
   title="Tutorial"
+  on:click={handleDropdownToggle}
 >
   Tutorial&nbsp;
 </button>

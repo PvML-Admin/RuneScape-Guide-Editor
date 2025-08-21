@@ -1,8 +1,34 @@
 <script>
   import 'flowbite'
   import CaretDownFill from 'svelte-bootstrap-icons/lib/CaretDownFill.svelte'
+  import { activeDropdown } from '../../stores'
 
   export let dispatch
+  const DROPDOWN_ID = 'CommandOptions'
+  
+  // Reactive statement to track if this dropdown is active
+  $: isDropdownOpen = $activeDropdown === DROPDOWN_ID
+
+  // Track dropdown state
+  function handleDropdownToggle(event) {
+    // Prevent Flowbite from interfering with our state management
+    event.preventDefault()
+    event.stopPropagation()
+    
+    if ($activeDropdown === DROPDOWN_ID) {
+      activeDropdown.set(null)
+    } else {
+      activeDropdown.set(DROPDOWN_ID)
+    }
+  }
+
+  function handleDropdownShow() {
+    activeDropdown.set(DROPDOWN_ID)
+  }
+
+  function handleDropdownHide() {
+    activeDropdown.set(null)
+  }
 
   function selectCommand(command) {
     try {
@@ -28,8 +54,9 @@
   id="CommandButton"
   data-dropdown-toggle="CommandOptions"
   type="button"
-  class="inline-flex items-center rounded bg-indigo-600 hover:bg-indigo-700 text-white px-2 py-2 active:bg-indigo-800 text-sm border border-indigo-700"
+  class="inline-flex items-center rounded {isDropdownOpen ? 'bg-blue-600 ring-2 ring-blue-400' : 'bg-gray-700'} hover:bg-gray-600 text-white px-2 py-2 active:bg-gray-800 text-sm border border-gray-600"
   title="Insert command"
+  on:click={handleDropdownToggle}
 >
   Command&nbsp;<CaretDownFill class="mt-1"></CaretDownFill>
 </button>
@@ -42,7 +69,7 @@
     <button
       title="."
       on:click={() => selectCommand('.')}
-      class="rounded-t flex-wrap text-left bg-indigo-600 hover:bg-indigo-700 p-2 active:bg-indigo-800 border border-indigo-700"
+      class="rounded-t flex-wrap text-left bg-gray-700 hover:bg-gray-600 p-2 active:bg-gray-800 border border-gray-600"
       type="button"
     >
       .
@@ -50,7 +77,7 @@
     <button
       title=".img:url"
       on:click={() => selectCommand('.img:')}
-      class="flex-wrap text-left bg-indigo-600 hover:bg-indigo-700 p-2 active:bg-indigo-800 border border-indigo-700"
+      class="flex-wrap text-left bg-gray-700 hover:bg-gray-600 p-2 active:bg-gray-800 border border-gray-600"
       type="button"
     >
       .img:url
@@ -58,7 +85,7 @@
     <button
       title=".tag:word/delete"
       on:click={() => selectCommand('.tag:')}
-      class="flex-wrap text-left bg-indigo-600 hover:bg-indigo-700 p-2 active:bg-indigo-800 border border-indigo-700"
+      class="flex-wrap text-left bg-gray-700 hover:bg-gray-600 p-2 active:bg-gray-800 border border-gray-600"
       type="button"
     >
       .tag:word
@@ -66,7 +93,7 @@
     <button
       title=".embed:json"
       on:click={() => selectCommand('.embed:json')}
-      class="flex-wrap text-left bg-indigo-600 hover:bg-indigo-700 p-2 active:bg-indigo-800 border border-indigo-700"
+      class="flex-wrap text-left bg-gray-700 hover:bg-gray-600 p-2 active:bg-gray-800 border border-gray-600"
       type="button"
     >
       .embed:json
@@ -74,7 +101,7 @@
     <button
       title=".componentsV2:json"
       on:click={() => selectCommand('.componentsV2:json')}
-      class="rounded-b mb-2 flex-wrap text-left bg-indigo-600 hover:bg-indigo-700 p-2 active:bg-indigo-800 border border-indigo-700"
+      class="rounded-b mb-2 flex-wrap text-left bg-gray-700 hover:bg-gray-600 p-2 active:bg-gray-800 border border-gray-600"
       type="button"
     >
       .componentsV2:json
@@ -82,7 +109,7 @@
     <button
       title="$linkmsg_tagword$"
       on:click={() => selectCommand('$linkmsg_tagword$')}
-      class="rounded-t flex-wrap text-left bg-indigo-600 hover:bg-indigo-700 p-2 active:bg-indigo-800 border border-indigo-700"
+      class="rounded-t flex-wrap text-left bg-gray-700 hover:bg-gray-600 p-2 active:bg-gray-800 border border-gray-600"
       type="button"
     >
       $linkmsg_tagword$

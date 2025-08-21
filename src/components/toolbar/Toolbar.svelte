@@ -13,17 +13,15 @@
   import ListUl from 'svelte-bootstrap-icons/lib/ListUl.svelte'
   import ListOl from 'svelte-bootstrap-icons/lib/ListOl.svelte'
   import Link from 'svelte-bootstrap-icons/lib/Link.svelte'
+  import XCircle from 'svelte-bootstrap-icons/lib/XCircle.svelte'
 
   import Button from './Button.svelte'
   import ButtonGroup from './ButtonGroup.svelte'
-  import ToCDropdown from './ToCDropdown.svelte'
-  import ComponentV2Templates from './ComponentV2Templates.svelte'
-  import TemplateMenu from './TemplateMenu.svelte'
+  import UnifiedTemplates from './UnifiedTemplates.svelte'
+  import MySavedTemplates from './MySavedTemplates.svelte'
   import CommandMenu from './CommandMenu.svelte'
   import Help from './Help.svelte'
-  import Info from './Info.svelte'
   import ToggleView from './ToggleView.svelte'
-  import ToggleScrollBottom from './ToggleScrollBottom.svelte'
   import ExportToTxt from './ExportToTxt.svelte'
   import Tutorial from './Tutorial.svelte'
 
@@ -101,19 +99,23 @@
   </ButtonGroup>
 
   <ButtonGroup>
+    <Button
+      on:click={() => dispatch('clearEditor')}
+      title="Clear Editor Text"
+      corner="rounded-l rounded-r"><XCircle />&nbsp;Clear Editor Text</Button
+    >
+  </ButtonGroup>
+
+  <ButtonGroup>
     <CommandMenu {dispatch}></CommandMenu>
   </ButtonGroup>
 
   <ButtonGroup>
-    <TemplateMenu></TemplateMenu>
+    <UnifiedTemplates></UnifiedTemplates>
   </ButtonGroup>
 
   <ButtonGroup>
-    <ToCDropdown></ToCDropdown>
-  </ButtonGroup>
-
-  <ButtonGroup>
-    <ComponentV2Templates></ComponentV2Templates>
+    <MySavedTemplates></MySavedTemplates>
   </ButtonGroup>
 
   <div class="inline-flex mx-2 ml-auto" role="group">
@@ -126,9 +128,7 @@
   </div>
 
   <div class="inline-flex mb-2 mx-2 ml-auto" role="group">
-    <ToggleScrollBottom {dispatch} />
     <ToggleView {dispatch} />
     <Help></Help>
-    <Info></Info>
   </div>
 </div>

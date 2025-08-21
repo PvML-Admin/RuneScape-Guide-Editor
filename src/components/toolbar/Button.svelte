@@ -5,7 +5,7 @@
 
 <button
   on:click
-  class="{corner} inline-flex items-center bg-indigo-600 hover:bg-indigo-700 text-white px-2 py-2 active:bg-indigo-800 text-sm border border-indigo-700"
+  class="{corner} inline-flex items-center bg-gray-700 hover:bg-gray-600 text-white px-2 py-2 active:bg-gray-800 text-sm border border-gray-600"
   {title}
   type="button"
 >
