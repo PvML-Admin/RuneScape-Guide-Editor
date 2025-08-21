@@ -283,7 +283,7 @@
   id="MySavedTemplatesButton"
   data-dropdown-toggle="MySavedTemplates"
   type="button"
-  class="inline-flex items-center rounded {isDropdownOpen ? 'bg-blue-600 ring-2 ring-blue-400' : 'bg-gray-700'} hover:bg-gray-600 text-white px-2 py-2 active:bg-gray-800 text-sm border border-gray-600"
+  class="inline-flex items-center rounded {isDropdownOpen ? 'bg-gray-700 border-white' : 'bg-gray-700 border-gray-600'} hover:bg-gray-600 text-white px-2 py-2 active:bg-gray-800 text-sm border"
   title="My saved templates"
   on:click={handleDropdownToggle}
 >
@@ -292,7 +292,7 @@
 
 <div
   id="MySavedTemplates"
-  class="z-10 hidden rounded shadow bg-slate-700 border border-slate-800"
+  class="z-10 hidden rounded shadow vscode-dropdown"
 >
   <div class="flex-grow flex flex-row">
     <div class="ml-4 my-4 mr-2 inline-flex flex-col text-white text-left text-sm min-w-max">
@@ -333,9 +333,15 @@
         </label>
       </div>
       
+      <!-- Separator -->
+      <div class="vscode-template-separator my-3 border-t"></div>
+
+      <!-- My Templates Section -->
+      <div class="vscode-template-section-header text-xs font-semibold mb-2 px-2">MY TEMPLATES</div>
+      
       <!-- Saved Templates List -->
       {#each savedTemplates as template, index}
-        <div class="flex items-center {index === savedTemplates.length - 1 ? 'rounded-b' : ''} bg-gray-600 border border-gray-500">
+        <div class="flex items-center {index === savedTemplates.length - 1 ? 'rounded-b' : ''} vscode-template-button border">
           {#if editingTemplate === template.id}
             <input
               bind:value={editName}
@@ -396,9 +402,9 @@
     </div>
     
     <div class="flex-col">
-      <div class="pl-2 pr-4 py-4 text-sm text-white flex-grow">
+      <div class="pl-2 pr-4 py-4 text-sm flex-grow">
         <pre
-          class="overflow-auto bg-slate-800 px-2"
+          class="vscode-template-preview overflow-auto px-2"
           style="height: 40vh; width: 45vw;">
 {selectedTemplate || 'Select a template to preview'}
         </pre>

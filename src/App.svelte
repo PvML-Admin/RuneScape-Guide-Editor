@@ -8,11 +8,22 @@
   import CodeMirror from 'codemirror'
   import 'codemirror/lib/codemirror.css'
   import 'codemirror/addon/display/placeholder.js'
-  import 'codemirror/theme/dracula.css'
+  // Removed Dracula theme - now using VS Code theme by default
   import 'codemirror/addon/edit/closebrackets'
   import 'codemirror/addon/edit/matchbrackets'
   import 'codemirror/addon/edit/trailingspace'
   import 'codemirror/addon/selection/active-line'
+  // JSON mode enhancements
+  import 'codemirror/mode/javascript/javascript.js'
+  import 'codemirror/addon/fold/foldcode.js'
+  import 'codemirror/addon/fold/foldgutter.js'
+  import 'codemirror/addon/fold/brace-fold.js'
+  import 'codemirror/addon/fold/indent-fold.js'
+  // VS Code-like JSON theme and mode
+  import './editor/vscodeJsonTheme.css'
+  import './editor/vscodeJsonMode.js'
+  import './editor/vscodeJsonModeEnhanced.js'
+  // Removed debugging CSS that was causing red highlights
 
   import './editor/autoIndent'
   import { onMount, onDestroy } from 'svelte'
@@ -21,15 +32,24 @@
     updateSingleLineStyleFormat
   } from './editor/styleFormat'
   import autoformatText from './editor/autoformat'
+  import { 
+    shouldUseJsonMode, 
+    getEnhancedOptions, 
+    toggleJsonMode,
+    getEnhancedKeyMap 
+  } from './editor/jsonEnhancements'
   import { populateConstants } from './pvmeSettings'
   import { text, activeDropdown } from './stores'
+  import { editorFeatures, editorTheme } from './stores/ui'
   import { get } from 'svelte/store'
+  import { initContextMenu } from './editor/contextMenu.js'
 
   let editor
   let validText = $text
   let previewText = $text
   let showView = true
   let scrollBottom = false
+  let contextMenuCleanup = null
   let debounceTimer = null
   let codeMirrorWrapper = null
 
@@ -84,8 +104,10 @@
     // Add global click listener
     document.addEventListener('click', handleGlobalClick)
     
-    editor = CodeMirror.fromTextArea(document.getElementById('input'), {
-      theme: 'dracula',
+    // Base editor configuration - VS Code theme by default
+    const baseOptions = {
+      mode: 'vscode-json-enhanced',  // Use our enhanced VS Code JSON mode
+      theme: $editorTheme,  // Use theme from store
       lineNumbers: true,
       lineWrapping: true,
       autoCloseBrackets: true,
@@ -95,8 +117,21 @@
       cursorScrollMargin: 12,
       showTrailingSpace: true,
       styleActiveLine: true,
-      viewportMargin: Infinity
-    })
+      viewportMargin: Infinity,
+      foldGutter: true,
+      gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
+    }
+    
+    // Apply JSON enhancements if enabled
+    const editorOptions = getEnhancedOptions(baseOptions, $editorFeatures.jsonModeEnabled)
+    editor = CodeMirror.fromTextArea(document.getElementById('input'), editorOptions)
+    
+    // Disabled JSON validation to avoid false error highlighting
+    // VS Code doesn't show red errors on valid JSON in this context
+    // if ($editorFeatures.jsonModeEnabled) {
+    //   const { initJsonValidation } = await import('./editor/jsonValidation.js')
+    //   initJsonValidation(editor)
+    // }
 
     // @ts-ignore - CodeMirror methods may not be properly typed
     editor.setSize('100%', '100%')
@@ -130,8 +165,8 @@
       }
     }, 100)
 
-    // @ts-ignore - CodeMirror methods may not be properly typed
-    editor.setOption('extraKeys', {
+    // Base keyboard shortcuts
+    const baseKeys = {
       'Ctrl-B': bold,
       'Ctrl-I': italic,
       'Ctrl-U': underline,
@@ -141,12 +176,62 @@
       'Ctrl-Alt-3': h3,
       Enter: 'newlineAndIndentContinueMarkdownList',
       Tab: 'autoIndentMarkdownList',
-      'Shift-Tab': 'autoUnindentMarkdownList'
-    })
+      'Shift-Tab': 'autoUnindentMarkdownList',
+      // VS Code-style shortcuts for context menu features
+      'Shift-Alt-F': () => {
+        // Format document
+        const content = editor.getValue()
+        try {
+          const parsed = JSON.parse(content)
+          const formatted = JSON.stringify(parsed, null, 2)
+          editor.setValue(formatted)
+        } catch (e) {
+          const lines = content.split('\n').map(line => line.trimRight())
+          const formatted = lines.join('\n').trim()
+          editor.setValue(formatted)
+        }
+      },
+      'Ctrl-Shift-Enter': () => {
+        // Insert line above
+        const cursor = editor.getCursor()
+        editor.replaceRange('\n', { line: cursor.line, ch: 0 })
+        editor.setCursor({ line: cursor.line, ch: 0 })
+      },
+      'Ctrl-Enter': () => {
+        // Insert line below
+        const cursor = editor.getCursor()
+        const lineContent = editor.getLine(cursor.line)
+        editor.replaceRange('\n', { line: cursor.line, ch: lineContent.length })
+        editor.setCursor({ line: cursor.line + 1, ch: 0 })
+      },
+      'Shift-Alt-Down': () => {
+        // Duplicate line
+        const cursor = editor.getCursor()
+        const lineContent = editor.getLine(cursor.line)
+        editor.replaceRange('\n' + lineContent, { line: cursor.line, ch: lineContent.length })
+        editor.setCursor({ line: cursor.line + 1, ch: cursor.ch })
+      }
+    }
+    
+    // Apply enhanced keyboard shortcuts if JSON mode is enabled
+    const keyMap = $editorFeatures.jsonModeEnabled 
+      ? getEnhancedKeyMap(editor, baseKeys) 
+      : baseKeys
+    
+    // @ts-ignore - CodeMirror methods may not be properly typed
+    editor.setOption('extraKeys', keyMap)
     // @ts-ignore - CodeMirror methods may not be properly typed
     editor.setValue($text)
     validateText()
+    
+    // Initialize VS Code-style context menu
+    contextMenuCleanup = initContextMenu(editor)
   })
+
+  // Reactive statement to update editor theme when store changes
+  $: if (editor && $editorTheme) {
+    editor.setOption('theme', $editorTheme)
+  }
 
   onDestroy(() => {
     // Clean up debounce timer on component destruction
@@ -155,6 +240,10 @@
     }
     // Clean up global click listener
     document.removeEventListener('click', handleGlobalClick)
+    // Clean up context menu
+    if (contextMenuCleanup) {
+      contextMenuCleanup()
+    }
     // Clean up the direct CodeMirror listener
     if (codeMirrorWrapper) {
       codeMirrorWrapper.removeEventListener('mousedown', closeActiveDropdown, true)
@@ -226,6 +315,20 @@
 
   function updater(cm, _change) {
     $text = cm.getValue()
+    
+    // Smart mode detection if enabled
+    if ($editorFeatures.smartModeDetection && $editorFeatures.jsonModeEnabled) {
+      const shouldUseJson = shouldUseJsonMode($text)
+      const currentMode = cm.getOption('mode')
+      const isCurrentlyJson = currentMode && currentMode.name === 'javascript'
+      
+      if (shouldUseJson && !isCurrentlyJson) {
+        toggleJsonMode(cm, true)
+      } else if (!shouldUseJson && isCurrentlyJson) {
+        toggleJsonMode(cm, false)
+      }
+    }
+    
     // Trigger debounced preview update for real-time visualization
     updatePreviewText()
   }

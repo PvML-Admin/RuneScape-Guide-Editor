@@ -372,7 +372,7 @@
   id="UnifiedTemplatesButton"
   data-dropdown-toggle="UnifiedTemplates"
   type="button"
-  class="inline-flex items-center rounded {isDropdownOpen ? 'bg-blue-600 ring-2 ring-blue-400' : 'bg-gray-700'} hover:bg-gray-600 text-white px-2 py-2 active:bg-gray-800 text-sm border border-gray-600"
+  class="inline-flex items-center rounded {isDropdownOpen ? 'bg-gray-700 border-white' : 'bg-gray-700 border-gray-600'} hover:bg-gray-600 text-white px-2 py-2 active:bg-gray-800 text-sm border"
   title="Templates and ComponentV2 examples"
   on:click={handleDropdownToggle}
 >
@@ -381,16 +381,16 @@
 
 <div
   id="UnifiedTemplates"
-  class="z-10 hidden rounded shadow bg-slate-700 border border-slate-800"
+  class="z-10 hidden rounded shadow vscode-dropdown"
 >
   <div class="flex-grow flex flex-row">
     <div class="ml-4 my-4 mr-2 inline-flex flex-col text-white text-left text-sm min-w-max">
       
       <!-- Table of Contents Section -->
-      <div class="text-xs font-semibold text-gray-400 mb-2 px-2">TABLE OF CONTENTS</div>
+      <div class="vscode-template-section-header text-xs font-semibold mb-2 px-2">TABLE OF CONTENTS</div>
       <button
         on:click={() => { generateCompactToC(); selectTemplate(toc); }}
-        class="flex-wrap text-left bg-gray-700 hover:bg-gray-600 p-2 active:bg-gray-800 border border-gray-600"
+        class="vscode-template-button flex-wrap text-left p-2 border"
         type="button"
         title="Generate compact table of contents"
       >
@@ -398,7 +398,7 @@
       </button>
       <button
         on:click={() => { generateCategorizedToC(); selectTemplate(toc); }}
-        class="flex-wrap text-left bg-gray-700 hover:bg-gray-600 p-2 active:bg-gray-800 border border-gray-600"
+        class="vscode-template-button flex-wrap text-left p-2 border"
         type="button"
         title="Generate categorized table of contents"
       >
@@ -406,19 +406,22 @@
       </button>
       <button
         on:click={() => { generateComponentV2ToC(); selectTemplate(toc); }}
-        class="flex-wrap text-left bg-gray-700 hover:bg-gray-600 p-2 active:bg-gray-800 border border-gray-600 mb-3"
+        class="vscode-template-button flex-wrap text-left p-2 border mb-3"
         type="button"
         title="Generate ComponentV2 table of contents"
       >
         ComponentV2
       </button>
 
+      <!-- Separator -->
+      <div class="vscode-template-separator my-3 border-t"></div>
+
       <!-- Basic Templates Section -->
-      <div class="text-xs font-semibold text-gray-400 mb-2 px-2">BASIC TEMPLATES</div>
+      <div class="vscode-template-section-header text-xs font-semibold mb-2 px-2">BASIC TEMPLATES</div>
       {#each Object.keys(basicTemplates) as templateName, index}
         <button
           on:click={() => selectTemplate(basicTemplates[templateName])}
-          class="flex-wrap text-left bg-gray-700 hover:bg-gray-600 p-2 active:bg-gray-800 border border-gray-600"
+          class="vscode-template-button flex-wrap text-left p-2 border"
           type="button"
           title={templateName}
         >
@@ -427,14 +430,14 @@
       {/each}
 
       <!-- Separator -->
-      <div class="my-3 border-t border-gray-600"></div>
+      <div class="vscode-template-separator my-3 border-t"></div>
 
       <!-- ComponentV2 Templates Section -->
-      <div class="text-xs font-semibold text-gray-400 mb-2 px-2">COMPONENTV2 TYPES</div>
+      <div class="vscode-template-section-header text-xs font-semibold mb-2 px-2">COMPONENTV2 TYPES</div>
       {#each Object.keys(componentV2Templates) as templateName, index}
         <button
           on:click={() => selectTemplate(componentV2Templates[templateName])}
-          class="{index === Object.keys(componentV2Templates).length - 1 ? 'rounded-b' : ''} flex-wrap text-left bg-gray-700 hover:bg-gray-600 p-2 active:bg-gray-800 border border-gray-600"
+          class="vscode-template-button {index === Object.keys(componentV2Templates).length - 1 ? 'rounded-b' : ''} flex-wrap text-left p-2 border"
           type="button"
           title={templateName}
         >
@@ -444,9 +447,9 @@
     </div>
     
     <div class="flex-col">
-      <div class="pl-2 pr-4 py-4 text-sm text-white flex-grow">
+      <div class="pl-2 pr-4 py-4 text-sm flex-grow">
         <pre
-          class="overflow-auto bg-slate-800 px-2"
+          class="vscode-template-preview overflow-auto px-2"
           style="height: 40vh; width: 45vw;">
 {selectedTemplate || 'Select a template to preview'}
         </pre>
@@ -471,3 +474,5 @@
     </div>
   </div>
 </div>
+
+

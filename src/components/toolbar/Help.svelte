@@ -34,7 +34,7 @@
   id="HelpButton"
   data-dropdown-toggle="HelpInformation"
   type="button"
-  class="rounded-l {isDropdownOpen ? 'bg-blue-600 ring-2 ring-blue-400' : 'bg-gray-700'} hover:bg-gray-600 text-white px-2 py-2 active:bg-gray-800 text-sm border border-gray-600"
+  class="rounded-l {isDropdownOpen ? 'bg-gray-700 border-white' : 'bg-gray-700 border-gray-600'} hover:bg-gray-600 text-white px-2 py-2 active:bg-gray-800 text-sm border"
   title="Help"
   on:click={handleDropdownToggle}
 >
@@ -43,7 +43,7 @@
 
 <div
   id="HelpInformation"
-  class="z-10 hidden rounded shadow bg-slate-700 border border-slate-800 overflow-auto"
+  class="z-10 hidden rounded shadow vscode-dropdown overflow-auto"
   style="max-height: 80vh;"
 >
   <div class="m-4 flex-col inline-flex text-white text-left text-sm">
@@ -72,47 +72,10 @@
             ></td
           >
         </tr>
-        <tr>
-          <td><code>;#armour-and-weapons;</code></td>
-          <td><code>&lt;#689235882724818962&gt;</code></td>
-          <td
-            ><a
-              href="https://raw.githubusercontent.com/pvme/pvme-settings/pvme-discord/channels.json"
-              class="text-blue-400 visited:text-purple-400">channels.json</a
-            ></td
-          >
-        </tr>
-        <tr>
-          <td><code>;@&pride of zaros;</code></td>
-          <td><code>&lt;@&581216406570532875&gt;</code></td>
-          <td
-            ><a
-              href="https://raw.githubusercontent.com/pvme/pvme-settings/pvme-discord/roles.json"
-              class="text-blue-400 visited:text-purple-400">roles.json</a
-            ></td
-          >
-        </tr>
-        <tr>
-          <td><code>;@pleb;</code></td>
-          <td><code>&lt;@207588233780002818&gt;</code></td>
-          <td
-            ><a
-              href="https://raw.githubusercontent.com/pvme/pvme-settings/settings/users/users.json"
-              class="text-blue-400 visited:text-purple-400">users.json</a
-            ></td
-          >
-        </tr>
+
       </tbody>
     </table>
     <h2 class="text-lg">Embed auto formatting</h2>
-    <p>
-      <i
-        >*Will be replaced by <a
-          href="https://github.com/pvme/guide-editor/issues/9"
-          class="text-blue-400 visited:text-purple-400">embed form editor</a
-        >.</i
-      >
-    </p>
     <table class="table-auto my-2">
       <thead class="bg-slate-800">
         <tr>
@@ -154,16 +117,68 @@
 </div>
 
 <style>
-  td,
+  /* Table styling for better visibility */
+  table {
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 2px solid #4a5568;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
   th {
-    padding: 5px;
-    border-width: 2px;
-    border-color: rgb(30 41 59);
+    padding: 8px 12px;
+    background-color: #2d3748 !important;
+    color: #ffffff !important;
+    font-weight: 600;
+    border-bottom: 2px solid #4a5568;
+    border-right: 1px solid #4a5568;
+  }
+
+  th:last-child {
+    border-right: none;
+  }
+
+  td {
+    padding: 8px 12px;
+    background-color: #1a202c;
+    border-bottom: 1px solid #4a5568;
+    border-right: 1px solid #4a5568;
+  }
+
+  td:last-child {
+    border-right: none;
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+
+  /* Alternating row colors for better readability */
+  tbody tr:nth-child(even) td {
+    background-color: #2d3748;
   }
 
   code {
-    background-color: rgb(30 41 59);
-    padding: 1px;
+    background-color: #4a5568 !important;
+    color: #e2e8f0 !important;
+    padding: 3px 6px !important;
+    border-radius: 3px;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 13px;
+  }
+
+  /* Links in table */
+  td a {
+    color: #63b3ed !important;
+  }
+
+  td a:visited {
+    color: #b794f6 !important;
+  }
+
+  td a:hover {
+    color: #90cdf4 !important;
   }
 
   h2 {

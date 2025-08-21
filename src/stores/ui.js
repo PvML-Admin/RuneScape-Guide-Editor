@@ -1,4 +1,5 @@
 import { writable } from 'svelte/store'
+import { persist, localStorage } from '@macfja/svelte-persistent-store'
 
 /**
  * UI state management for loading, errors, and notifications
@@ -27,6 +28,20 @@ export const errorStates = writable({
 
 // Notification system
 export const notifications = writable([])
+
+// Editor enhancement feature flags - VS Code mode is now always enabled
+// Kept for backward compatibility but no longer used
+export const editorFeatures = writable({
+  jsonModeEnabled: true,  // Always enabled
+  smartModeDetection: true,  // Always enabled
+  enhancedFolding: true  // Always enabled
+})
+
+// Discord theme configuration - persistent across sessions
+export const discordTheme = persist(writable('theme-dark'), localStorage(), 'discordTheme')
+
+// Editor theme configuration - persistent across sessions
+export const editorTheme = persist(writable('vscode-json'), localStorage(), 'editorTheme')
 
 /**
  * Add a notification to the queue

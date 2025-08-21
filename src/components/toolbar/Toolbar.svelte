@@ -24,6 +24,8 @@
   import ToggleView from './ToggleView.svelte'
   import ExportToTxt from './ExportToTxt.svelte'
   import Tutorial from './Tutorial.svelte'
+  import ThemeSelector from './ThemeSelector.svelte'
+  // Removed JsonModeToggle import - VS Code styling is now default
 
   const dispatch = createEventDispatcher()
 </script>
@@ -118,6 +120,8 @@
     <MySavedTemplates></MySavedTemplates>
   </ButtonGroup>
 
+  <!-- Removed JSON Mode toggle - VS Code styling is now default -->
+
   <div class="inline-flex mx-2 ml-auto" role="group">
     <ButtonGroup>
       <Tutorial></Tutorial>
@@ -128,6 +132,7 @@
   </div>
 
   <div class="inline-flex mb-2 mx-2 ml-auto" role="group">
+    <ThemeSelector></ThemeSelector>
     <ToggleView {dispatch} />
     <Help></Help>
   </div>

@@ -54,7 +54,7 @@
   id="CommandButton"
   data-dropdown-toggle="CommandOptions"
   type="button"
-  class="inline-flex items-center rounded {isDropdownOpen ? 'bg-blue-600 ring-2 ring-blue-400' : 'bg-gray-700'} hover:bg-gray-600 text-white px-2 py-2 active:bg-gray-800 text-sm border border-gray-600"
+  class="inline-flex items-center rounded {isDropdownOpen ? 'bg-gray-700 border-white' : 'bg-gray-700 border-gray-600'} hover:bg-gray-600 text-white px-2 py-2 active:bg-gray-800 text-sm border"
   title="Insert command"
   on:click={handleDropdownToggle}
 >
@@ -63,7 +63,7 @@
 
 <div
   id="CommandOptions"
-  class="z-10 hidden rounded shadow bg-slate-700 border border-slate-800"
+  class="z-10 hidden rounded shadow vscode-dropdown"
 >
   <div class="m-4 flex-col inline-flex text-white text-left text-sm">
     <button

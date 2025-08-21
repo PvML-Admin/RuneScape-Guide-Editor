@@ -2,6 +2,7 @@
   import Message from './Message.svelte'
   import Avatar from './Avatar.svelte'
   import Bot from './Bot.svelte'
+  import { discordTheme } from '../../stores/ui.js'
 
   import { onMount, afterUpdate } from 'svelte'
 
@@ -50,7 +51,7 @@
 </script>
 
 <div class="discord-view">
-  <div class="flex-vertical whitney theme-dark">
+  <div class="flex-vertical whitney {$discordTheme}">
     <div class="chat flex-vertical flex-spacer">
       <div class="content flex-spacer flex-horizontal">
         <div class="flex-spacer flex-vertical messages-wrapper">

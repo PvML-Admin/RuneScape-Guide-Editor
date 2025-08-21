@@ -120,7 +120,7 @@
 
 <div
   id="ToCInformation"
-  class="z-10 hidden rounded shadow bg-slate-700 border border-slate-800"
+  class="z-10 hidden rounded shadow vscode-dropdown"
 >
   <div class="flex-grow flex flex-row">
     <div

@@ -1,0 +1,402 @@
+/* VS Code JSON Theme for CodeMirror */
+/* Based on VS Code Dark+ theme colors */
+
+.cm-s-vscode-json.CodeMirror {
+  background: #1e1e1e;
+  color: #d4d4d4;
+}
+
+.cm-s-vscode-json div.CodeMirror-selected {
+  background: #264f78;
+}
+
+.cm-s-vscode-json .CodeMirror-line::selection,
+.cm-s-vscode-json .CodeMirror-line > span::selection,
+.cm-s-vscode-json .CodeMirror-line > span > span::selection {
+  background: rgba(38, 79, 120, 0.99);
+}
+
+.cm-s-vscode-json .CodeMirror-line::-moz-selection,
+.cm-s-vscode-json .CodeMirror-line > span::-moz-selection,
+.cm-s-vscode-json .CodeMirror-line > span > span::-moz-selection {
+  background: rgba(38, 79, 120, 0.99);
+}
+
+.cm-s-vscode-json .CodeMirror-gutters {
+  background: #1e1e1e;
+  border-right: 0px;
+}
+
+.cm-s-vscode-json .CodeMirror-guttermarker {
+  color: white;
+}
+
+.cm-s-vscode-json .CodeMirror-guttermarker-subtle {
+  color: #d0d0d0;
+}
+
+.cm-s-vscode-json .CodeMirror-linenumber {
+  color: #858585;
+}
+
+.cm-s-vscode-json .CodeMirror-cursor {
+  border-left: 1px solid #aeafad;
+}
+
+/* JSON-specific token colors matching VS Code exactly */
+
+/* Property names (keys) - light blue like VS Code */
+.cm-s-vscode-json span.cm-string.cm-property {
+  color: #9cdcfe !important; /* Property names - VS Code light blue */
+}
+
+.cm-s-vscode-json span.cm-property {
+  color: #9cdcfe !important; /* Property names - VS Code light blue */
+}
+
+/* String values - orange/brown like VS Code */
+.cm-s-vscode-json span.cm-string.cm-value {
+  color: #ce9178 !important; /* String values - VS Code orange */
+}
+
+.cm-s-vscode-json span.cm-string {
+  color: #ce9178; /* Default string color - VS Code orange */
+}
+
+/* Override for built-in JavaScript mode tokens */
+.cm-s-vscode-json span.cm-string:not(.cm-property):not(.cm-value) {
+  color: #ce9178; /* String values - VS Code orange */
+}
+
+.cm-s-vscode-json span.cm-number {
+  color: #b5cea8; /* Numbers - VS Code light green */
+}
+
+.cm-s-vscode-json span.cm-atom {
+  color: #569cd6; /* true, false, null - VS Code blue */
+}
+
+.cm-s-vscode-json span.cm-keyword {
+  
+}
+
+/* Additional VS Code specific tokens */
+.cm-s-vscode-json span.cm-variable {
+  color: #9cdcfe; /* Variables - light blue */
+}
+
+.cm-s-vscode-json span.cm-variable-2 {
+  color: #9cdcfe; /* Variables - light blue */
+}
+
+.cm-s-vscode-json span.cm-def {
+  color: #9cdcfe; /* Definitions - light blue */
+}
+
+/* Punctuation - brackets, braces, colons, commas (VS Code style) */
+.cm-s-vscode-json span.cm-punctuation {
+  color: #d4d4d4; /* Default text color for punctuation */
+}
+
+/* Bracket context coloring like VS Code */
+.cm-s-vscode-json span.cm-bracket {
+  color: #d4d4d4; /* Default bracket color */
+  font-weight: normal;
+}
+
+.cm-s-vscode-json span.cm-bracket.cm-brace-open,
+.cm-s-vscode-json span.cm-bracket.cm-brace-close {
+  color: #ffd700; /* Gold for braces {} */
+}
+
+.cm-s-vscode-json span.cm-bracket.cm-square-open,
+.cm-s-vscode-json span.cm-bracket.cm-square-close {
+  color: #da70d6; /* Orchid for square brackets [] */
+}
+
+/* Colon and comma styling */
+.cm-s-vscode-json span.cm-punctuation.cm-colon {
+  color: #d4d4d4;
+}
+
+.cm-s-vscode-json span.cm-punctuation.cm-comma {
+  color: #d4d4d4;
+}
+
+/* JavaScript mode specific token classes for JSON */
+.cm-s-vscode-json span.cm-string-2 {
+  color: #9cdcfe; /* Alternative string class for property names */
+}
+
+.cm-s-vscode-json span.cm-variable-3 {
+  color: #9cdcfe; /* Another variable class */
+}
+
+/* Fallback for standard JavaScript mode in JSON context */
+.cm-s-vscode-json span.cm-string {
+  color: #ce9178; /* Default: string values are orange */
+}
+
+/* Context-based coloring for JavaScript mode */
+.cm-s-vscode-json span.cm-string:first-child {
+  color: #9cdcfe; /* First string in a line (likely property name) */
+}
+
+/* More specific selectors for property vs value distinction */
+.cm-s-vscode-json span.cm-string ~ span.cm-operator + span.cm-string {
+  color: #ce9178; /* String after colon operator */
+}
+
+.cm-s-vscode-json span.cm-string + span.cm-operator[title=":"] ~ span.cm-string {
+  
+}
+
+/* Error highlighting - disabled to match VS Code behavior */
+.cm-s-vscode-json span.cm-error {
+  background: transparent;
+  color: #d4d4d4; /* Use default text color instead of error styling */
+}
+
+/* Comments (though JSON doesn't support them, useful for debugging) */
+.cm-s-vscode-json span.cm-comment {
+  color: #6a9955;
+}
+
+/* Active line highlighting - VS Code style (extremely subtle) */
+.cm-s-vscode-json.CodeMirror-focused .CodeMirror-activeline-background {
+  background: rgba(255, 255, 255, 0.04); /* Very subtle highlight like VS Code */
+}
+
+.cm-s-vscode-json .CodeMirror-activeline-background {
+  background: rgba(255, 255, 255, 0.02); /* Even more subtle when not focused */
+}
+
+/* Matching bracket highlighting */
+.cm-s-vscode-json .CodeMirror-matchingbracket {
+  outline: 1px solid #515a6b;
+  color: inherit;
+}
+
+.cm-s-vscode-json .CodeMirror-nonmatchingbracket {
+  color: #f14c4c;
+}
+
+/* Folding */
+.cm-s-vscode-json .CodeMirror-foldmarker {
+  background: #424242;
+  border: 1px solid #515a6b;
+  color: #d4d4d4;
+  border-radius: 3px;
+  padding: 0 3px;
+  cursor: pointer;
+}
+
+.cm-s-vscode-json .CodeMirror-foldgutter {
+  width: 16px;
+}
+
+.cm-s-vscode-json .CodeMirror-foldgutter-open,
+.cm-s-vscode-json .CodeMirror-foldgutter-folded {
+  cursor: pointer;
+  color: #515a6b;
+}
+
+.cm-s-vscode-json .CodeMirror-foldgutter-open:after {
+  content: "\25BC"; /* Down arrow */
+}
+
+.cm-s-vscode-json .CodeMirror-foldgutter-folded:after {
+  content: "\25B6"; /* Right arrow */
+}
+
+/* Indentation guides (subtle) */
+.cm-s-vscode-json .CodeMirror-line {
+  position: relative;
+}
+
+/* Scrollbar styling to match VS Code */
+.cm-s-vscode-json .CodeMirror-scrollbar-filler,
+.cm-s-vscode-json .CodeMirror-gutter-filler {
+  background-color: #1e1e1e;
+}
+
+.cm-s-vscode-json .CodeMirror-vscrollbar,
+.cm-s-vscode-json .CodeMirror-hscrollbar {
+  background: #1e1e1e;
+}
+
+.cm-s-vscode-json .CodeMirror-scrollbar-filler {
+  background: #1e1e1e;
+}
+
+/* JSON Error markers and validation - disabled to match VS Code */
+.json-error-squiggle {
+  border-bottom: none !important;
+  cursor: default;
+}
+
+.json-error-gutter {
+  display: none; /* Hide error markers completely */
+}
+
+/* Enhanced bracket highlighting like VS Code */
+.cm-s-vscode-json .CodeMirror-matchingbracket {
+  outline: 1px solid #515a6b;
+  background: rgba(81, 90, 107, 0.2);
+  color: inherit !important;
+  border-radius: 2px;
+}
+
+.cm-s-vscode-json .CodeMirror-nonmatchingbracket {
+  color: #f14c4c !important;
+  background: rgba(241, 76, 76, 0.1);
+  border-radius: 2px;
+}
+
+/* Improved selection styling */
+.cm-s-vscode-json .CodeMirror-selected {
+  background: #264f78;
+}
+
+.cm-s-vscode-json.CodeMirror-focused .CodeMirror-selected {
+  background: #264f78;
+}
+
+/* Better cursor styling */
+.cm-s-vscode-json .CodeMirror-cursor {
+  border-left: 2px solid #aeafad;
+  border-right: none;
+  width: 0;
+}
+
+/* Line number styling to match VS Code */
+.cm-s-vscode-json .CodeMirror-linenumber {
+  color: #858585;
+  padding: 0 5px 0 5px;
+  min-width: 20px;
+  text-align: right;
+  font-size: 13px;
+}
+
+/* Active line number highlighting - VS Code style */
+.cm-s-vscode-json.CodeMirror-focused .CodeMirror-activeline .CodeMirror-linenumber {
+  color: #c6c6c6;
+  background: rgba(255, 255, 255, 0.04); /* Match the active line background */
+}
+
+.cm-s-vscode-json .CodeMirror-activeline .CodeMirror-linenumber {
+  color: #c6c6c6;
+  background: rgba(255, 255, 255, 0.02); /* Subtle when not focused */
+}
+
+/* Improved folding markers */
+.cm-s-vscode-json .CodeMirror-foldgutter-open:after,
+.cm-s-vscode-json .CodeMirror-foldgutter-folded:after {
+  font-size: 10px;
+  color: #858585;
+}
+
+.cm-s-vscode-json .CodeMirror-foldgutter-open:hover:after,
+.cm-s-vscode-json .CodeMirror-foldgutter-folded:hover:after {
+  color: #c6c6c6;
+}
+
+/* VS Code Template Dropdown Styling */
+/* Apply VS Code theme to template dropdowns and previews */
+.vscode-dropdown {
+  background-color: #252526 !important; /* Slightly lighter than editor to avoid clash */
+  border-color: #3c3c3c !important; /* VS Code border */
+}
+
+.vscode-dropdown .vscode-template-preview {
+  background-color: #1e1e1e !important; /* VS Code background for preview */
+  color: #d4d4d4 !important; /* VS Code text color */
+  border: 1px solid #3c3c3c !important; /* VS Code border */
+}
+
+/* VS Code JSON syntax highlighting for template previews */
+.vscode-dropdown .vscode-template-preview {
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.vscode-dropdown .vscode-template-button {
+  background-color: #37373d !important; /* Lighter VS Code button background */
+  color: #d4d4d4 !important; /* VS Code text */
+  border-color: #3c3c3c !important; /* VS Code border */
+}
+
+.vscode-dropdown .vscode-template-button:hover {
+  background-color: #464647 !important; /* Lighter VS Code hover */
+}
+
+.vscode-dropdown .vscode-template-section-header {
+  color: #ffffff !important; /* Bright white for better visibility */
+}
+
+.vscode-dropdown .vscode-template-separator {
+  border-color: #3c3c3c !important; /* VS Code separator */
+}
+
+/* VS Code Context Menu Styling */
+.vscode-context-menu {
+  position: fixed;
+  z-index: 10000;
+  background-color: #252526;
+  border: 1px solid #3c3c3c;
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  padding: 4px 0;
+  min-width: 200px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 13px;
+  color: #cccccc;
+  display: none;
+}
+
+.vscode-context-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.1s ease;
+}
+
+.vscode-context-item:hover:not(.vscode-context-disabled) {
+  background-color: #094771;
+  color: #ffffff;
+}
+
+.vscode-context-item.vscode-context-disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.vscode-context-icon {
+  width: 16px;
+  height: 16px;
+  margin-right: 12px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vscode-context-text {
+  flex: 1;
+  margin-right: 24px;
+}
+
+.vscode-context-shortcut {
+  font-size: 11px;
+  color: #858585;
+  opacity: 0.8;
+}
+
+.vscode-context-separator {
+  height: 1px;
+  background-color: #3c3c3c;
+  margin: 4px 8px;
+}

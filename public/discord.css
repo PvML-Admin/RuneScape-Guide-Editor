@@ -729,15 +729,13 @@
   color: hsla(0, 0%, 100%, 0.2);
 }
 
-.theme-dark .message-group .embed-wrapper .embed-color-pill {
-  background-color: #4f545c;
+/* Discord embeds always use the same dark background regardless of theme */
+.embed {
+  background-color: #2f3136 !important;
+  border-left: 4px solid #202225 !important;
 }
 
-.theme-dark .message-group .embed {
-  background-color: rgba(46, 48, 54, 0.3);
-  border-color: rgba(46, 48, 54, 0.6);
-}
-
+/* Embed text colors change with theme for readability */
 .theme-dark .message-group .embed .embed-footer,
 .theme-dark .message-group .embed .embed-provider {
   color: hsla(0, 0%, 100%, 0.6);
@@ -757,6 +755,29 @@
 }
 
 .theme-dark .message-group .embed .embed-fields .embed-field-name {
+  color: #fff;
+}
+
+/* Light theme embed text colors - using light colors for readability on dark embed background */
+.theme-light .message-group .embed .embed-footer,
+.theme-light .message-group .embed .embed-provider {
+  color: hsla(0, 0%, 100%, 0.6);
+}
+
+.theme-light .message-group .embed .embed-author-name {
+  color: #fff !important;
+}
+
+.theme-light .message-group .embed div.embed-title {
+  color: #fff;
+}
+
+.theme-light .message-group .embed .embed-description,
+.theme-light .message-group .embed .embed-fields {
+  color: hsla(0, 0%, 100%, 0.6);
+}
+
+.theme-light .message-group .embed .embed-fields .embed-field-name {
   color: #fff;
 }
 
@@ -1204,4 +1225,126 @@
 .discord-view a {
   color: #00b0f4;
   text-decoration: none;
+}
+
+/* Additional Discord Themes */
+
+/* Midnight Theme - Extra Dark */
+.theme-midnight .chat {
+  background-color: #0d1117;
+}
+
+.theme-midnight .chat > .content,
+.theme-midnight .friends-table,
+.theme-midnight .messages-wrapper {
+  background-color: #0d1117;
+}
+
+.theme-midnight .message-group h2 strong {
+  color: #f0f6fc;
+}
+
+.theme-midnight .message-group h2 span {
+  color: #8b949e;
+}
+
+.theme-midnight .message-group a {
+  color: #58a6ff;
+}
+
+.theme-midnight .message-group .comment .markup {
+  color: #e6edf3;
+}
+
+.theme-midnight .message-group .comment .markup pre {
+  background-color: #161b22 !important;
+  border: 1px solid #30363d !important;
+}
+
+.theme-midnight .message-group .comment .markup code.inline,
+.theme-midnight .message-group .comment .markup pre code {
+  background-color: #161b22 !important;
+}
+
+/* Midnight theme embed text colors */
+.theme-midnight .message-group .embed .embed-footer,
+.theme-midnight .message-group .embed .embed-provider {
+  color: #8b949e;
+}
+
+.theme-midnight .message-group .embed .embed-author-name {
+  color: #f0f6fc !important;
+}
+
+.theme-midnight .message-group .embed div.embed-title {
+  color: #f0f6fc;
+}
+
+.theme-midnight .message-group .embed .embed-description,
+.theme-midnight .message-group .embed .embed-fields {
+  color: #e6edf3;
+}
+
+.theme-midnight .message-group .embed .embed-fields .embed-field-name {
+  color: #f0f6fc;
+}
+
+/* Amoled Theme - Pure Black */
+.theme-amoled .chat {
+  background-color: #000000;
+}
+
+.theme-amoled .chat > .content,
+.theme-amoled .friends-table,
+.theme-amoled .messages-wrapper {
+  background-color: #000000;
+}
+
+.theme-amoled .message-group h2 strong {
+  color: #ffffff;
+}
+
+.theme-amoled .message-group h2 span {
+  color: #b3b3b3;
+}
+
+.theme-amoled .message-group a {
+  color: #00d4aa;
+}
+
+.theme-amoled .message-group .comment .markup {
+  color: #ffffff;
+}
+
+.theme-amoled .message-group .comment .markup pre {
+  background-color: #1a1a1a !important;
+  border: 1px solid #333333 !important;
+}
+
+.theme-amoled .message-group .comment .markup code.inline,
+.theme-amoled .message-group .comment .markup pre code {
+  background-color: #1a1a1a !important;
+}
+
+/* AMOLED theme embed text colors */
+.theme-amoled .message-group .embed .embed-footer,
+.theme-amoled .message-group .embed .embed-provider {
+  color: #b3b3b3;
+}
+
+.theme-amoled .message-group .embed .embed-author-name {
+  color: #ffffff !important;
+}
+
+.theme-amoled .message-group .embed div.embed-title {
+  color: #ffffff;
+}
+
+.theme-amoled .message-group .embed .embed-description,
+.theme-amoled .message-group .embed .embed-fields {
+  color: #ffffff;
+}
+
+.theme-amoled .message-group .embed .embed-fields .embed-field-name {
+  color: #ffffff;
 }

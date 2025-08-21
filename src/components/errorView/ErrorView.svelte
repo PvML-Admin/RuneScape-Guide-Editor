@@ -36,6 +36,7 @@
 
 <style>
   .errorView {
-    background-color: #282a36;
+    background-color: #1e1e1e; /* VS Code background color to match editor */
+    border-top: 1px solid #3c3c3c; /* Subtle border to separate from editor */
   }
 </style>
