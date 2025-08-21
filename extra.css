@@ -83,10 +83,13 @@ img[src*='cdn.discordapp.com/emojis/'] {
   color: #72767d !important;
   font-size: 12px !important;
   font-weight: 400 !important;
-  line-height: 1.375 !important;
-  margin: 4px 0 8px 0 !important;
+  line-height: 1.1 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: inline-block !important;
+  width: 100% !important;
+  vertical-align: top !important;
 }
-
 /* Ensure subtext styling applies in all contexts */
 .message-group .comment .markup .discord-subtext,
 .message-group .markup .discord-subtext,
@@ -94,6 +97,11 @@ img[src*='cdn.discordapp.com/emojis/'] {
   color: #72767d !important;
   font-size: 12px !important;
   font-weight: 400 !important;
-  line-height: 1.375 !important;
-  margin: 4px 0 8px 0 !important;
+  line-height: 1.1 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: inline-block !important;
+  width: 100% !important;
+  vertical-align: top !important;
 }
+
