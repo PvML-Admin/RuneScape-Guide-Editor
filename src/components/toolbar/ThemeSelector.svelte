@@ -10,9 +10,7 @@
   // Available Discord themes
   const discordThemes = [
     { id: 'theme-dark', name: 'Dark Theme', description: 'Default Discord dark theme' },
-    { id: 'theme-light', name: 'Light Theme', description: 'Discord light theme' },
-    { id: 'theme-midnight', name: 'Midnight Theme', description: 'Extra dark theme inspired by GitHub' },
-    { id: 'theme-amoled', name: 'AMOLED Theme', description: 'Pure black theme for OLED displays' }
+    { id: 'theme-light', name: 'Light Theme', description: 'Discord light theme' }
   ]
 
   // Available Editor themes
@@ -39,16 +37,7 @@
   }
 
   function selectDiscordTheme(themeId) {
-    console.log('Setting Discord theme to:', themeId)
     discordTheme.set(themeId)
-    
-    // Debug: Log the actual DOM classes after a short delay
-    setTimeout(() => {
-      const discordView = document.querySelector('.discord-view .flex-vertical.whitney')
-      console.log('Discord view classes:', discordView?.className)
-      console.log('Theme applied:', themeId)
-    }, 100)
-    
     activeDropdown.set(null)
   }
 

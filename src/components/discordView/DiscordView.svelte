@@ -5,6 +5,16 @@
   import { discordTheme } from '../../stores/ui.js'
 
   import { onMount, afterUpdate } from 'svelte'
+  
+  // Ensure theme is valid, fallback to theme-dark if not
+  $: validTheme = ($discordTheme === 'theme-light' || $discordTheme === 'theme-dark') 
+    ? $discordTheme 
+    : 'theme-dark'
+  
+  // Reset invalid themes
+  $: if ($discordTheme !== 'theme-light' && $discordTheme !== 'theme-dark') {
+    discordTheme.set('theme-dark')
+  }
 
   export let text
   export let scrollBottom = false
@@ -51,7 +61,7 @@
 </script>
 
 <div class="discord-view">
-  <div class="flex-vertical whitney {$discordTheme}">
+  <div class="flex-vertical whitney {validTheme}">
     <div class="chat flex-vertical flex-spacer">
       <div class="content flex-spacer flex-horizontal">
         <div class="flex-spacer flex-vertical messages-wrapper">
