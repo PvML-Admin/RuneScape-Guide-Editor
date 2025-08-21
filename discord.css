@@ -1228,41 +1228,51 @@
 }
 
 /* Additional Discord Themes */
+/* Debug: These should override base Discord styles in production */
+
+/* Force higher specificity for custom themes */
+.discord-view .flex-vertical.whitney.theme-midnight .chat {
+  background-color: #0d1117 !important;
+}
+
+.discord-view .flex-vertical.whitney.theme-amoled .chat {
+  background-color: #000000 !important;
+}
 
 /* Midnight Theme - Extra Dark */
-.theme-midnight .chat {
-  background-color: #0d1117;
+.discord-view .theme-midnight .chat {
+  background-color: #0d1117 !important;
 }
 
-.theme-midnight .chat > .content,
-.theme-midnight .friends-table,
-.theme-midnight .messages-wrapper {
-  background-color: #0d1117;
+.discord-view .theme-midnight .chat > .content,
+.discord-view .theme-midnight .friends-table,
+.discord-view .theme-midnight .messages-wrapper {
+  background-color: #0d1117 !important;
 }
 
-.theme-midnight .message-group h2 strong {
-  color: #f0f6fc;
+.discord-view .theme-midnight .message-group h2 strong {
+  color: #f0f6fc !important;
 }
 
-.theme-midnight .message-group h2 span {
-  color: #8b949e;
+.discord-view .theme-midnight .message-group h2 span {
+  color: #8b949e !important;
 }
 
-.theme-midnight .message-group a {
-  color: #58a6ff;
+.discord-view .theme-midnight .message-group a {
+  color: #58a6ff !important;
 }
 
-.theme-midnight .message-group .comment .markup {
-  color: #e6edf3;
+.discord-view .theme-midnight .message-group .comment .markup {
+  color: #e6edf3 !important;
 }
 
-.theme-midnight .message-group .comment .markup pre {
+.discord-view .theme-midnight .message-group .comment .markup pre {
   background-color: #161b22 !important;
   border: 1px solid #30363d !important;
 }
 
-.theme-midnight .message-group .comment .markup code.inline,
-.theme-midnight .message-group .comment .markup pre code {
+.discord-view .theme-midnight .message-group .comment .markup code.inline,
+.discord-view .theme-midnight .message-group .comment .markup pre code {
   background-color: #161b22 !important;
 }
 
@@ -1290,39 +1300,39 @@
 }
 
 /* Amoled Theme - Pure Black */
-.theme-amoled .chat {
-  background-color: #000000;
+.discord-view .theme-amoled .chat {
+  background-color: #000000 !important;
 }
 
-.theme-amoled .chat > .content,
-.theme-amoled .friends-table,
-.theme-amoled .messages-wrapper {
-  background-color: #000000;
+.discord-view .theme-amoled .chat > .content,
+.discord-view .theme-amoled .friends-table,
+.discord-view .theme-amoled .messages-wrapper {
+  background-color: #000000 !important;
 }
 
-.theme-amoled .message-group h2 strong {
-  color: #ffffff;
+.discord-view .theme-amoled .message-group h2 strong {
+  color: #ffffff !important;
 }
 
-.theme-amoled .message-group h2 span {
-  color: #b3b3b3;
+.discord-view .theme-amoled .message-group h2 span {
+  color: #b3b3b3 !important;
 }
 
-.theme-amoled .message-group a {
-  color: #00d4aa;
+.discord-view .theme-amoled .message-group a {
+  color: #00d4aa !important;
 }
 
-.theme-amoled .message-group .comment .markup {
-  color: #ffffff;
+.discord-view .theme-amoled .message-group .comment .markup {
+  color: #ffffff !important;
 }
 
-.theme-amoled .message-group .comment .markup pre {
+.discord-view .theme-amoled .message-group .comment .markup pre {
   background-color: #1a1a1a !important;
   border: 1px solid #333333 !important;
 }
 
-.theme-amoled .message-group .comment .markup code.inline,
-.theme-amoled .message-group .comment .markup pre code {
+.discord-view .theme-amoled .message-group .comment .markup code.inline,
+.discord-view .theme-amoled .message-group .comment .markup pre code {
   background-color: #1a1a1a !important;
 }
 
