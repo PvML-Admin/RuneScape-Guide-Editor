@@ -1161,6 +1161,31 @@
 }
 /* End: Workaround for reverting tailwind preflight on heading tags */
 
+/* Discord-style headers for normal messages */
+.discord-view .markup h1 {
+  font-size: 1.5rem !important;
+  font-weight: 600 !important;
+  color: #ffffff !important;
+  margin: 16px 0 8px 0 !important;
+  line-height: 1.2 !important;
+}
+
+.discord-view .markup h2 {
+  font-size: 1.25rem !important;
+  font-weight: 600 !important;
+  color: #ffffff !important;
+  margin: 12px 0 6px 0 !important;
+  line-height: 1.2 !important;
+}
+
+.discord-view .markup h3 {
+  font-size: 1.125rem !important;
+  font-weight: 600 !important;
+  color: #ffffff !important;
+  margin: 8px 0 4px 0 !important;
+  line-height: 1.2 !important;
+}
+
 .discord-view button {
   border: 0;
   cursor: pointer;

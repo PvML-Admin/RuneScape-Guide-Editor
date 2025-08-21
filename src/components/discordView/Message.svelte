@@ -151,12 +151,7 @@
       }
     }
 
-    // Additional sanitization for the final content
-    if (messageFormatted.content) {
-      messageFormatted.content = sanitizeDiscordContent(
-        messageFormatted.content
-      )
-    }
+    // Content is already sanitized by markdownToHTML, no need for double sanitization
   }
 </script>
 

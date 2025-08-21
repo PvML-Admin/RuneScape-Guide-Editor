@@ -10,20 +10,37 @@ rules.list.match = () => {
   return false
 }
 
-/* Disable header formatting for normal message content (matches Discord behavior)
-Headers (# ## ###) only work in ComponentsV2 contexts, not in regular Discord messages
-*/
+/* Headers work everywhere now - no conflicts with -# processing */
+
+/* Add support for h3 headers (###) since discord-markdown might not support them by default */
 const originalHeadingMatch = rules.heading.match
+const originalHeadingParse = rules.heading.parse
+
 rules.heading.match = (source, state, prevCapture) => {
-  // Check if we're in ComponentsV2 context by looking at the call stack
-  const isComponentContext = new Error().stack?.includes('renderTextContent')
+  // First try the original heading match
+  const originalMatch = typeof originalHeadingMatch === 'function' ? originalHeadingMatch(source, state, prevCapture) : null
+  if (originalMatch) return originalMatch
   
-  if (isComponentContext && typeof originalHeadingMatch === 'function') {
-    return originalHeadingMatch(source, state, prevCapture)
+  // If that fails, try to match ### headers specifically
+  const h3Match = /^(#{3})\s+(.+?)(?:\n|$)/.exec(source)
+  if (h3Match) {
+    return h3Match
   }
   
-  // Disable headers in normal message context (matches Discord behavior)
-  return false
+  return null
+}
+
+rules.heading.parse = (capture, parse, state) => {
+  // If we have the original parse function and it's not our h3 match, use it
+  if (typeof originalHeadingParse === 'function' && capture[1].length !== 3) {
+    return originalHeadingParse(capture, parse, state)
+  }
+  
+  // Handle our custom h3 parsing
+  return {
+    level: capture[1].length,
+    content: parse(capture[2].trim(), state)
+  }
 }
 
 /* Overide blockquote formatting to use discord format. 
@@ -61,44 +78,7 @@ rules.inlineCode.html = (node, output, state) => {
   )
 }
 
-/**
- * Post-process Discord subtext formatting (-#) after markdown conversion
- * @param {string} htmlContent - HTML content from markdown processor
- * @returns {string} - Content with -# converted to Discord subtext divs
- */
-function formatDiscordSubtext(htmlContent) {
-  if (!htmlContent) return htmlContent
 
-  let result = htmlContent
-
-  // Pre-process: Handle -# before standard markdown processing interferes
-  // Split the HTML into lines and process each line individually
-  const lines = result.split(/(<br\s*\/?>|<\/p><p>|<p>|<\/p>)/i)
-  
-  const processedLines = lines.map(line => {
-    // Skip HTML tags
-    if (line.match(/^<[^>]+>$/)) {
-      return line
-    }
-    
-    const trimmedLine = line.trim()
-    
-    // Only process lines that start with -# (and aren't already processed)
-    if (trimmedLine.match(/^-#\s+/) && !line.includes('discord-subtext')) {
-      const subtextContent = trimmedLine.replace(/^-#\s+/, '')
-      return `<div class="discord-subtext">${subtextContent}</div>`
-    }
-    
-    return line
-  })
-  
-  result = processedLines.join('')
-  
-  // Clean up any remaining paragraph tags around subtext
-  result = result.replace(/<p><div class="discord-subtext">(.*?)<\/div><\/p>/g, '<div class="discord-subtext">$1</div>')
-
-  return result
-}
 
 // add attachmentUrls for links not contained in <url>
 let messageAttachments = []
@@ -146,12 +126,24 @@ function formatSpecialChannels(originalContent) {
   return content
 }
 
-export default function markdownToHTML(messageContent) {
+export default function markdownToHTML(messageContent, options = {}) {
   // todo: linkmsg formatting
   messageAttachments = []
 
-  // convert discord markdown to HTML
-  let content = toHTML(messageContent, {
+  // STEP 1: Replace -# with safe placeholder that won't be processed as markdown
+  let processedContent = messageContent
+  const subtextMap = new Map()
+  let subtextCounter = 0
+
+  processedContent = processedContent.replace(/^-#\s+(.+)$/gm, (match, content) => {
+    const id = `SUBTEXTPLACEHOLDER${subtextCounter++}`
+    subtextMap.set(id, content.trim())
+    return id
+  })
+
+  // STEP 2: Process normal markdown (headers work, placeholders are ignored)
+  console.log('Before toHTML:', processedContent)
+  let content = toHTML(processedContent, {
     discordCallback: {
       channel: (node) => '#' + channels[node.id],
       user: (node) => '@' + users[node.id],
@@ -161,12 +153,23 @@ export default function markdownToHTML(messageContent) {
     // may need to be disabled for embed titles? but should never happen
     embed: true
   })
+  console.log('After toHTML:', content)
 
   // format <id:guide> and <id:customize>
   content = formatSpecialChannels(content)
 
-  // Post-process Discord subtext (-#) after markdown conversion
-  content = formatDiscordSubtext(content)
+  // STEP 3: Replace placeholders with subtext HTML
+  subtextMap.forEach((subtextContent, placeholder) => {
+    // Replace placeholder whether it's wrapped in <p> tags or not
+    content = content.replace(
+      new RegExp(`<p>${placeholder}</p>`, 'g'),
+      `<div class="discord-subtext">${subtextContent}</div>`
+    )
+    content = content.replace(
+      new RegExp(placeholder, 'g'),
+      `<div class="discord-subtext">${subtextContent}</div>`
+    )
+  })
 
   // Final sanitization step
   content = sanitizeDiscordContent(content)
