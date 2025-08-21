@@ -22,7 +22,8 @@
   } from './editor/styleFormat'
   import autoformatText from './editor/autoformat'
   import { populateConstants } from './pvmeSettings'
-  import { text } from './stores'
+  import { text, activeDropdown } from './stores'
+  import { get } from 'svelte/store'
 
   let editor
   let validText = $text
@@ -30,8 +31,59 @@
   let showView = true
   let scrollBottom = false
   let debounceTimer = null
+  let codeMirrorWrapper = null
+
+  function closeActiveDropdown() {
+    const activeId = get(activeDropdown)
+    if (!activeId) return
+
+    // Reset our state first to un-highlight the button
+    activeDropdown.set(null)
+
+    // Now, tell Flowbite to hide its element
+    try {
+      const dropdownElement = document.getElementById(activeId)
+      // The toggle button is needed to initialize the Flowbite instance
+      const toggleElement = document.querySelector(`[data-dropdown-toggle="${activeId}"]`)
+
+      if (dropdownElement && toggleElement) {
+        // @ts-ignore - Flowbite may not be properly typed
+        const Dropdown = window.Flowbite?.Dropdown || window.Dropdown
+        if (Dropdown) {
+          const dropdownInstance = new Dropdown(dropdownElement, toggleElement)
+          // Check if it's visible before trying to hide, to avoid errors
+          if (dropdownInstance.isVisible()) {
+            dropdownInstance.hide()
+          }
+        } else {
+          // Fallback if Flowbite JS isn't loaded or fails
+          dropdownElement.classList.add('hidden')
+        }
+      }
+    } catch (error) {
+      console.warn(`Flowbite dropdown force close failed:`, error)
+    }
+  }
+
+  // Global click handler to close dropdowns when clicking outside
+  function handleGlobalClick(event) {
+    // Check if the click is on a dropdown button or inside a dropdown
+    const target = event.target
+    const isDropdownButton = target.closest('[data-dropdown-toggle]')
+    const isInsideDropdown = target.closest('[id*="Templates"], [id*="Information"], [id*="Options"]')
+    const isCodeMirror = target.closest('.CodeMirror')
+
+    // The CodeMirror mousedown event will handle clicks inside the editor.
+    // This handler will take care of clicks everywhere else.
+    if (!isDropdownButton && !isInsideDropdown && !isCodeMirror) {
+      closeActiveDropdown()
+    }
+  }
 
   onMount(async () => {
+    // Add global click listener
+    document.addEventListener('click', handleGlobalClick)
+    
     editor = CodeMirror.fromTextArea(document.getElementById('input'), {
       theme: 'dracula',
       lineNumbers: true,
@@ -52,6 +104,31 @@
     editor.on('change', updater)
     // @ts-ignore - CodeMirror methods may not be properly typed
     editor.on('inputRead', newInput)
+
+    // *** THE FIX ***
+    // We attach a mousedown listener directly to the editor's wrapper element
+    // during the CAPTURE phase. This ensures our handler runs BEFORE
+    // CodeMirror's internal handlers can stop the event's propagation.
+    // @ts-ignore
+    codeMirrorWrapper = editor.getWrapperElement()
+    codeMirrorWrapper.addEventListener('mousedown', closeActiveDropdown, true)
+    
+    // @ts-ignore - CodeMirror methods may not be properly typed
+    editor.on('focus', () => {
+      console.log('CodeMirror focus - closing dropdowns')
+      activeDropdown.set(null)
+    })
+    
+    // Also add direct DOM event listener to the CodeMirror wrapper
+    setTimeout(() => {
+      const codeMirrorElement = document.querySelector('.CodeMirror')
+      if (codeMirrorElement) {
+        codeMirrorElement.addEventListener('mousedown', (e) => {
+          console.log('Direct CodeMirror DOM mousedown - closing dropdowns')
+          activeDropdown.set(null)
+        }, true) // Use capture phase
+      }
+    }, 100)
 
     // @ts-ignore - CodeMirror methods may not be properly typed
     editor.setOption('extraKeys', {
@@ -75,6 +152,12 @@
     // Clean up debounce timer on component destruction
     if (debounceTimer) {
       clearTimeout(debounceTimer)
+    }
+    // Clean up global click listener
+    document.removeEventListener('click', handleGlobalClick)
+    // Clean up the direct CodeMirror listener
+    if (codeMirrorWrapper) {
+      codeMirrorWrapper.removeEventListener('mousedown', closeActiveDropdown, true)
     }
   })
 
@@ -156,6 +239,14 @@
     scrollBottom = !scrollBottom
     editor.focus()
   }
+
+  function clearEditor() {
+    if (confirm('Are you sure you want to clear all text in the editor? This action cannot be undone.')) {
+      editor.setValue('')
+      $text = ''
+      editor.focus()
+    }
+  }
 </script>
 
 <main>
@@ -173,6 +264,7 @@
       on:orderedList={() => updateLineFormat('1. ')}
       on:inlineCode={() => updateInlineFormat('`', '`')}
       on:codeBlock={() => updateInlineFormat('```', '```')}
+      on:clearEditor={clearEditor}
       on:command={command}
       on:toggleView={() => (showView = !showView)}
       on:toggleScrollBottom={toggleScrollBottom}

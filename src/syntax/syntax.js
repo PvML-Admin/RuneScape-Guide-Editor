@@ -10,12 +10,72 @@ function formatError(error) {
   else return `'${error.instancePath.slice(1)}' ${error.message}`
 }
 
-function validateEmbedSchema(results, line, embed) {
+function validateEmbedSchema(results, commandLine, embed, originalText) {
   const valid = validator(embed)
   if (!valid) {
     for (const error of validator.errors) {
+      // Try to find the actual line number where the error occurs in the JSON
+      let actualLine = commandLine
+      
+      // Extract the property name from the error
+      const propertyName = error.keyword === 'additionalProperties' 
+        ? error.params?.additionalProperty 
+        : error.instancePath?.replace(/^\//, '')
+      
+      if (propertyName && originalText) {
+        const lines = originalText.split('\n')
+        
+        // Try multiple search strategies
+        let found = false
+        
+        // Strategy 1: Look for the exact property path
+        if (error.instancePath) {
+          const pathParts = error.instancePath.split('/').filter(part => part)
+          
+          // For nested properties like /fields/0/value
+          if (pathParts.length > 0) {
+            const lastProperty = pathParts[pathParts.length - 1]
+            
+            // Look for the property as a JSON key
+            const propertyPattern = new RegExp(`"${lastProperty.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"\\s*:`)
+            
+            for (let i = 0; i < lines.length; i++) {
+              if (propertyPattern.test(lines[i])) {
+                actualLine = i + 1
+                found = true
+                break
+              }
+            }
+          }
+        }
+        
+        // Strategy 2: additionalProperties errors
+        if (!found && error.keyword === 'additionalProperties') {
+          const propertyPattern = new RegExp(`"${propertyName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"\\s*:`)
+          
+          for (let i = 0; i < lines.length; i++) {
+            if (propertyPattern.test(lines[i])) {
+              actualLine = i + 1
+              found = true
+              break
+            }
+          }
+        }
+        
+        // Strategy 3: Simple search fallback
+        if (!found && propertyName) {
+          for (let i = 0; i < lines.length; i++) {
+            if (lines[i].includes(`"${propertyName}"`)) {
+              actualLine = i + 1
+              found = true
+              break
+            }
+          }
+        }
+      }
+      
       results.push({
-        line: line,
+        line: actualLine,
         type: 'error',
         text: formatError(error)
       })
@@ -185,15 +245,35 @@ function findSyntaxErrors(text) {
               if (embed.fields) {
                 for (let j = 0; j < embed.fields.length; j++) {
                   if (embed.fields[j].name.trim().length == 0) {
+                    // Find the actual line where the empty name field is
+                    let nameLineNumber = i + 1
+                    const lines = text.split('\n')
+                    for (let lineIdx = 0; lineIdx < lines.length; lineIdx++) {
+                      if (lines[lineIdx].includes('"name"') && lines[lineIdx].includes('""')) {
+                        nameLineNumber = lineIdx + 1
+                        break
+                      }
+                    }
+                    
                     results.push({
-                      line: i + 1,
+                      line: nameLineNumber,
                       type: 'error',
                       text: 'JSON embed object is invalid: "name" is empty in an embed field'
                     })
                   }
                   if (embed.fields[j].value.trim() == 0) {
+                    // Find the actual line where the empty value field is
+                    let valueLineNumber = i + 1
+                    const lines = text.split('\n')
+                    for (let lineIdx = 0; lineIdx < lines.length; lineIdx++) {
+                      if (lines[lineIdx].includes('"value"') && lines[lineIdx].includes('""')) {
+                        valueLineNumber = lineIdx + 1
+                        break
+                      }
+                    }
+                    
                     results.push({
-                      line: i + 1,
+                      line: valueLineNumber,
                       type: 'error',
                       text: 'JSON embed object is invalid: "value" is empty in an embed field'
                     })
@@ -205,7 +285,7 @@ function findSyntaxErrors(text) {
             }
 
             // TODO: validate embed object
-            validateEmbedSchema(results, i + 1, embed)
+            validateEmbedSchema(results, i + 1, embed, text)
           }
         } else if (base === 'componentsV2') {
           if (param !== 'json' && param !== '') {

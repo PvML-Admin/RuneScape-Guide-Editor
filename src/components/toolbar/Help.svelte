@@ -1,14 +1,42 @@
 <script>
   import 'flowbite'
   import QuestionCircle from 'svelte-bootstrap-icons/lib/QuestionCircle.svelte'
+  import { activeDropdown } from '../../stores'
+
+  const DROPDOWN_ID = 'HelpInformation'
+  
+  // Reactive statement to track if this dropdown is active
+  $: isDropdownOpen = $activeDropdown === DROPDOWN_ID
+
+  // Track dropdown state
+  function handleDropdownToggle(event) {
+    // Prevent Flowbite from interfering with our state management
+    event.preventDefault()
+    event.stopPropagation()
+    
+    if ($activeDropdown === DROPDOWN_ID) {
+      activeDropdown.set(null)
+    } else {
+      activeDropdown.set(DROPDOWN_ID)
+    }
+  }
+
+  function handleDropdownShow() {
+    activeDropdown.set(DROPDOWN_ID)
+  }
+
+  function handleDropdownHide() {
+    activeDropdown.set(null)
+  }
 </script>
 
 <button
   id="HelpButton"
   data-dropdown-toggle="HelpInformation"
   type="button"
-  class="rounded-l bg-indigo-600 hover:bg-indigo-700 text-white px-2 py-2 active:bg-indigo-800 text-sm border border-indigo-700"
+  class="rounded-l {isDropdownOpen ? 'bg-blue-600 ring-2 ring-blue-400' : 'bg-gray-700'} hover:bg-gray-600 text-white px-2 py-2 active:bg-gray-800 text-sm border border-gray-600"
   title="Help"
+  on:click={handleDropdownToggle}
 >
   <QuestionCircle />
 </button>
@@ -122,50 +150,6 @@
         </tr>
       </tbody>
     </table>
-    <h2 class="text-lg">Table of Contents</h2>
-    <p>
-      The table of contents is automatically generated from every <code
-        >.tag:tagname</code
-      >:
-    </p>
-    <p>
-      <a href="https://gyazo.com/660bdd70da519834a2250e8523ae7455"
-        ><img
-          src="https://i.gyazo.com/660bdd70da519834a2250e8523ae7455.gif"
-          alt="Table of contents generation demo"
-          class="media"
-        /></a
-      >
-    </p>
-    <h2 class="text-lg">Lists</h2>
-    <p>
-      Use <code>Tab</code> and <code>Shift</code> + <code>Tab</code> to change the
-      bullet type.
-    </p>
-    <p>Press <code>Enter</code> after a empty bullet to close the list.</p>
-    <p>
-      <a href="https://gyazo.com/7c4cf8bd4c28ecb8051a1f44b774d047"
-        ><img
-          src="https://i.gyazo.com/7c4cf8bd4c28ecb8051a1f44b774d047.gif"
-          alt="List formatting demo"
-          class="media"
-        /></a
-      >
-    </p>
-    <h2 class="text-lg">Inline formatting</h2>
-    <p>
-      Use a shortcut (see tooltip) or click the formatting options to
-      (un-)format text:
-    </p>
-    <p>
-      <a href="https://gyazo.com/541d606b59339ccb21fa85c3f54bffe1"
-        ><img
-          src="https://i.gyazo.com/541d606b59339ccb21fa85c3f54bffe1.gif"
-          alt="Inline formatting demo"
-          class="media"
-        /></a
-      >
-    </p>
   </div>
 </div>
 

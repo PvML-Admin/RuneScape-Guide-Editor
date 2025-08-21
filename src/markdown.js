@@ -10,6 +10,22 @@ rules.list.match = () => {
   return false
 }
 
+/* Disable header formatting for normal message content (matches Discord behavior)
+Headers (# ## ###) only work in ComponentsV2 contexts, not in regular Discord messages
+*/
+const originalHeadingMatch = rules.heading.match
+rules.heading.match = (source, state, prevCapture) => {
+  // Check if we're in ComponentsV2 context by looking at the call stack
+  const isComponentContext = new Error().stack?.includes('renderTextContent')
+  
+  if (isComponentContext && typeof originalHeadingMatch === 'function') {
+    return originalHeadingMatch(source, state, prevCapture)
+  }
+  
+  // Disable headers in normal message context (matches Discord behavior)
+  return false
+}
+
 /* Overide blockquote formatting to use discord format. 
 FROM:
 <blockquote>text<br>more text</blockquote>
@@ -53,26 +69,33 @@ rules.inlineCode.html = (node, output, state) => {
 function formatDiscordSubtext(htmlContent) {
   if (!htmlContent) return htmlContent
 
-  // Try multiple patterns to handle different HTML structures
   let result = htmlContent
 
-  // Pattern 1: <p>-# content</p>
-  result = result.replace(
-    /<p>-#\s+(.+?)<\/p>/g,
-    '<div class="discord-subtext">$1</div>'
-  )
-
-  // Pattern 2: Direct -# in text (no wrapping)
-  result = result.replace(
-    /^-#\s+(.+)$/gm,
-    '<div class="discord-subtext">$1</div>'
-  )
-
-  // Pattern 3: -# anywhere in the content
-  result = result.replace(
-    /-#\s+([^\n<]+)/g,
-    '<div class="discord-subtext">$1</div>'
-  )
+  // Pre-process: Handle -# before standard markdown processing interferes
+  // Split the HTML into lines and process each line individually
+  const lines = result.split(/(<br\s*\/?>|<\/p><p>|<p>|<\/p>)/i)
+  
+  const processedLines = lines.map(line => {
+    // Skip HTML tags
+    if (line.match(/^<[^>]+>$/)) {
+      return line
+    }
+    
+    const trimmedLine = line.trim()
+    
+    // Only process lines that start with -# (and aren't already processed)
+    if (trimmedLine.match(/^-#\s+/) && !line.includes('discord-subtext')) {
+      const subtextContent = trimmedLine.replace(/^-#\s+/, '')
+      return `<div class="discord-subtext">${subtextContent}</div>`
+    }
+    
+    return line
+  })
+  
+  result = processedLines.join('')
+  
+  // Clean up any remaining paragraph tags around subtext
+  result = result.replace(/<p><div class="discord-subtext">(.*?)<\/div><\/p>/g, '<div class="discord-subtext">$1</div>')
 
   return result
 }
