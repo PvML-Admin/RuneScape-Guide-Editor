@@ -210,6 +210,16 @@
         const lineContent = editor.getLine(cursor.line)
         editor.replaceRange('\n' + lineContent, { line: cursor.line, ch: lineContent.length })
         editor.setCursor({ line: cursor.line + 1, ch: cursor.ch })
+      },
+      'Ctrl-Shift-I': async () => {
+        // Auto-indent JSON blocks
+        const { autoIndentJsonBlocks } = await import('./editor/jsonEnhancements.js')
+        autoIndentJsonBlocks(editor)
+      },
+      'Ctrl-Alt-L': async () => {
+        // Alternative auto-indent JSON blocks shortcut
+        const { autoIndentJsonBlocks } = await import('./editor/jsonEnhancements.js')
+        autoIndentJsonBlocks(editor)
       }
     }
     
@@ -350,6 +360,21 @@
       editor.focus()
     }
   }
+
+  async function autoIndentJson() {
+    if (editor) {
+      const { autoIndentJsonBlocks } = await import('./editor/jsonEnhancements.js')
+      const success = autoIndentJsonBlocks(editor)
+      if (success) {
+        // Optional: Show success notification
+        console.log('JSON auto-indented successfully')
+      } else {
+        // Optional: Show info that no JSON was found or formatted
+        console.log('No JSON content found to format')
+      }
+      editor.focus()
+    }
+  }
 </script>
 
 <main>
@@ -367,6 +392,7 @@
       on:orderedList={() => updateLineFormat('1. ')}
       on:inlineCode={() => updateInlineFormat('`', '`')}
       on:codeBlock={() => updateInlineFormat('```', '```')}
+      on:autoIndentJson={autoIndentJson}
       on:clearEditor={clearEditor}
       on:command={command}
       on:toggleView={() => (showView = !showView)}

@@ -79,6 +79,26 @@ img[src*='cdn.discordapp.com/emojis/'] {
 }
 
 /* Discord subtext styling (-# markdown) */
+
+/* Button label image styling */
+.discord-button img.d-emoji,
+.discord-button img[src*='cdn.discordapp.com/emojis/'],
+.discord-button img[src*='img.pvme.io'] {
+  display: inline !important;
+  width: 1.2em !important;
+  height: 1.2em !important;
+  max-width: 1.2em !important;
+  max-height: 1.2em !important;
+  vertical-align: middle !important;
+  margin: 0 0.2em !important;
+  border: none !important;
+  border-radius: 2px !important;
+}
+
+/* Ensure button content stays inline */
+.discord-button * {
+  vertical-align: middle !important;
+}
 .discord-subtext {
   color: #72767d !important;
   font-size: 12px !important;

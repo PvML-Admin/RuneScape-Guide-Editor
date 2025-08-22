@@ -95,8 +95,12 @@
     >
     <Button
       on:click={() => dispatch('codeBlock')}
-      title="Code block"
-      corner="rounded-r"><CodeSquare /></Button
+      title="Code block"><CodeSquare /></Button
+    >
+    <Button
+      on:click={() => dispatch('autoIndentJson')}
+      title="Auto Indent JSON - Ctrl+Shift+I"
+      corner="rounded-r">{'{ }'}</Button
     >
   </ButtonGroup>
 

@@ -57,6 +57,11 @@ export function initContextMenu(editor) {
         <span class="vscode-context-text">Format Document</span>
         <span class="vscode-context-shortcut">Shift+Alt+F</span>
       </div>
+      <div class="vscode-context-item" data-action="autoIndentJson">
+        <span class="vscode-context-icon">🔧</span>
+        <span class="vscode-context-text">Auto Indent JSON</span>
+        <span class="vscode-context-shortcut">Button in toolbar</span>
+      </div>
       <div class="vscode-context-separator"></div>
       <div class="vscode-context-item" data-action="insertLineAbove">
         <span class="vscode-context-icon">⬆️</span>
@@ -173,6 +178,13 @@ export function initContextMenu(editor) {
     }
   }
   
+  function autoIndentJson() {
+    // Import and use the enhanced JSON auto-indent function
+    import('../editor/jsonEnhancements.js').then(module => {
+      module.autoIndentJsonBlocks(editor)
+    })
+  }
+  
   function insertLineAbove() {
     const cursor = editor.getCursor()
     editor.replaceRange('\n', { line: cursor.line, ch: 0 })
@@ -280,6 +292,10 @@ export function initContextMenu(editor) {
         
       case 'formatDocument':
         formatDocument()
+        break
+        
+      case 'autoIndentJson':
+        autoIndentJson()
         break
         
       case 'insertLineAbove':

@@ -5,6 +5,7 @@
   import Clipboard from 'svelte-bootstrap-icons/lib/Clipboard.svelte'
   import Button from './Button.svelte'
   import { activeDropdown } from '../../stores'
+  import { text } from '../../stores'
 
   let selectedTemplate = ''
   let copyPromise
@@ -37,41 +38,38 @@
     activeDropdown.set(null)
   }
 
+  function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1)
+  }
+
   function getToCChapters() {
-    const codeMirrorElement = document.querySelector('.CodeMirror')
-    // @ts-ignore - CodeMirror instance attached to DOM element
-    const text = codeMirrorElement?.CodeMirror?.getValue() || ''
-    const lines = text.split('\n')
-    const chapters = []
+    // Enhanced logic that works with both embeds and componentsV2
+    // Parse .tag:name from text (supports multiple formats)
+    const regexp = /\.tag:(\[([^\]]+)\]|([^\n\s]+))/g
+    const chapters = [...$text.matchAll(regexp)]
     
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i]
-      if (line.startsWith('# ') && line.includes('.tag:[')) {
-        const match = line.match(/\.tag:\[([^\]]+)\]/)
-        if (match) {
-          chapters.push([i + 1, match[1]])
-        }
-      }
-    }
-    
-    return chapters
+    // Process matches to extract tag names
+    return chapters.map(match => {
+      // match[2] is for .tag:[name] format, match[3] is for .tag:name format
+      const tagName = match[2] || match[3]
+      return [match.index, tagName]
+    })
   }
 
   function formatChapters(chapters) {
-    return chapters.map(chapter => `[${chapter[1]}]($linkmsg_${chapter[1]}$)`).join('\\n⬥ ')
+    return chapters.map(chapter => 
+      `⬥ [${capitalizeFirstLetter(chapter[1])}]($linkmsg_${chapter[1]}$)`
+    ).join('\\n')
   }
 
   function generateCompactToC() {
     const chapters = getToCChapters()
-    let chaptersFormatted = ''
-    for (const result of chapters) {
-      chaptersFormatted += `\\n⬥ [${result[1]}]($linkmsg_${result[1]}$)`
-    }
+    const chaptersFormatted = formatChapters(chapters)
 
     toc = `{
   "embed": {
     "title": "__Table of Contents__",
-    "description": "*To edit this guide in our web editor [click here](<https://example.com/guide-editor/>), or visit <id:customize> and select Entry Editor*${chaptersFormatted}",
+    "description": "*To edit this guide in our web editor [click here](<https://example.com/guide-editor/>), or visit <id:customize> and select Entry Editor*\\n${chaptersFormatted}",
     "color": 39423
   }
 }
@@ -84,7 +82,7 @@
     let fields = []
     for (const chapter of chapters) {
       fields.push(`      {
-        "name": "__${chapter[1]}__",
+        "name": "__${capitalizeFirstLetter(chapter[1])}__",
         "value": "[Link]($linkmsg_${chapter[1]}$)",
         "inline": true
       }`)
@@ -113,8 +111,10 @@
     let tocLinks = ''
     
     if (chapters.length > 0) {
-      // Generate links from detected chapters
-      tocLinks = chapters.map(chapter => `[${chapter[1]}]($linkmsg_${chapter[1]}$)`).join('\\n')
+      // Generate links from detected chapters with capitalization
+      tocLinks = chapters.map(chapter => 
+        `[${capitalizeFirstLetter(chapter[1])}]($linkmsg_${chapter[1]}$)`
+      ).join('\\n')
     } else {
       // Generic default template if no chapters detected
       tocLinks = '[Section 1]($linkmsg_section1$)\\n[Section 2]($linkmsg_section2$)\\n[Section 3]($linkmsg_section3$)\\n[Section 4]($linkmsg_section4$)\\n[Conclusion]($linkmsg_conclusion$)'

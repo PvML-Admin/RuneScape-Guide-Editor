@@ -56,6 +56,43 @@
   }
 
   /**
+   * Process button labels to resolve images, emojis, and basic markdown
+   * @param {string} label - The button label text
+   * @returns {string} - Processed HTML content
+   */
+  function processButtonLabel(label) {
+    if (!label || label.trim() === '') return ''
+    
+    // Process the label through markdown system for image/emoji resolution
+    const { content: processedLabel } = markdownToHTML(label.trim())
+    
+    // Remove any paragraph tags since button labels should be inline
+    return processedLabel.replace(/<\/?p>/g, '')
+  }
+
+  /**
+   * Render Discord emoji from emoji object
+   * @param {Object} emoji - Discord emoji object with name and id
+   * @returns {string} - HTML for emoji image or fallback text
+   */
+  function renderDiscordEmoji(emoji) {
+    if (!emoji) return ''
+    
+    if (emoji.id) {
+      // Custom Discord emoji with ID - check if animated
+      const isAnimated = emoji.animated || false
+      const extension = isAnimated ? 'gif' : 'png'
+      const emojiUrl = `https://cdn.discordapp.com/emojis/${emoji.id}.${extension}`
+      return `<img class="d-emoji" src="${emojiUrl}" alt=":${emoji.name}:" title=":${emoji.name}:" draggable="false">`
+    } else if (emoji.name) {
+      // Unicode emoji or fallback to name
+      return emoji.name
+    }
+    
+    return ''
+  }
+
+  /**
    * Check if a URL is a video (basic check)
    * @param {string} url - Media URL
    * @returns {boolean} - True if likely a video
@@ -156,12 +193,10 @@
                     title="Custom ID: {component.accessory.custom_id ||
                       'No ID'}"
                   >
-                    {#if component.accessory.emoji && component.accessory.emoji.name}
-                      <span class="button-emoji"
-                        >{component.accessory.emoji.name}</span
-                      >
+                    {#if component.accessory.emoji}
+                      {@html renderDiscordEmoji(component.accessory.emoji)}
                     {/if}
-                    {component.accessory.label || 'Button'}
+                    {@html processButtonLabel(component.accessory.label)}
                   </button>
                 </div>
               {/if}
@@ -232,12 +267,10 @@
                     disabled
                     title="Custom ID: {actionComponent.custom_id || 'No ID'}"
                   >
-                    {#if actionComponent.emoji && actionComponent.emoji.name}
-                      <span class="button-emoji"
-                        >{actionComponent.emoji.name}</span
-                      >
+                    {#if actionComponent.emoji}
+                      {@html renderDiscordEmoji(actionComponent.emoji)}
                     {/if}
-                    {actionComponent.label || 'Button'}
+                    {@html processButtonLabel(actionComponent.label)}
                   </button>
                 {:else if actionComponent.type === 3}
                   <!-- Select in Action Row -->
@@ -285,10 +318,10 @@
                 disabled
                 title="Custom ID: {component.custom_id || 'No ID'}"
               >
-                {#if component.emoji && component.emoji.name}
-                  <span class="button-emoji">{component.emoji.name}</span>
+                {#if component.emoji}
+                  {@html renderDiscordEmoji(component.emoji)}
                 {/if}
-                {component.label || 'Button'}
+                {@html processButtonLabel(component.label)}
               </button>
             </div>
           </div>
@@ -309,8 +342,8 @@
                     value={option.value}
                     title={option.description || ''}
                   >
-                    {#if option.emoji && option.emoji.name}
-                      {option.emoji.name}
+                    {#if option.emoji}
+                      {option.emoji.name || ''}
                     {/if}
                     {option.label || 'Option'}
                   </option>

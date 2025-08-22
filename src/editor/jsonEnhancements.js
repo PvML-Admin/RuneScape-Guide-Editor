@@ -149,6 +149,108 @@ export function smartIndentJson(editor) {
 }
 
 /**
+ * Auto-indent JSON blocks - works with selection or current cursor position
+ * @param {CodeMirror} editor - CodeMirror editor instance
+ */
+export function autoIndentJsonBlocks(editor) {
+  if (!editor) return
+  
+  const selection = editor.listSelections()[0]
+  const hasSelection = editor.somethingSelected()
+  
+  if (hasSelection) {
+    // Format selected text
+    const selectedText = editor.getSelection()
+    if (selectedText.trim()) {
+      const formatted = formatJsonText(selectedText)
+      if (formatted !== selectedText) {
+        editor.replaceSelection(formatted)
+        return true
+      }
+    }
+    return false
+  } else {
+    // Find and format JSON block containing cursor
+    const cursor = editor.getCursor()
+    const content = editor.getValue()
+    const lines = content.split('\n')
+    
+    // Find the JSON block that contains the cursor
+    let jsonBlock = findJsonBlockAtCursor(lines, cursor.line)
+    
+    if (jsonBlock) {
+      const blockLines = lines.slice(jsonBlock.start, jsonBlock.end + 1)
+      const blockText = blockLines.join('\n')
+      
+      if (blockText.trim()) {
+        const formatted = formatJsonText(blockText)
+        
+        if (formatted !== blockText) {
+          const startPos = { line: jsonBlock.start, ch: 0 }
+          const endPos = { line: jsonBlock.end, ch: blockLines[blockLines.length - 1].length }
+          
+          editor.replaceRange(formatted, startPos, endPos)
+          return true
+        }
+      }
+    }
+    
+    return false
+  }
+}
+
+/**
+ * Find JSON block that contains the specified line
+ * @param {string[]} lines - Array of lines
+ * @param {number} cursorLine - Line number where cursor is located
+ * @returns {Object|null} - JSON block info or null if not found
+ */
+function findJsonBlockAtCursor(lines, cursorLine) {
+  let inJsonBlock = false
+  let jsonBlockStart = -1
+  let currentCommand = ''
+  
+  // Scan from beginning to find the JSON block containing cursor
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim()
+    
+    // Check for JSON embed commands
+    if (line.startsWith('.embed:json') || line.startsWith('.componentsV2:json')) {
+      inJsonBlock = true
+      jsonBlockStart = i + 1
+      currentCommand = line
+      continue
+    }
+    
+    // Check for other commands that end JSON blocks
+    if (line.startsWith('.') && line.length > 1 && !line.startsWith('.embed:json') && !line.startsWith('.componentsV2:json')) {
+      if (inJsonBlock && jsonBlockStart !== -1 && cursorLine >= jsonBlockStart && cursorLine < i) {
+        // Cursor is in this JSON block
+        return {
+          start: jsonBlockStart,
+          end: i - 1,
+          command: currentCommand
+        }
+      }
+      inJsonBlock = false
+      jsonBlockStart = -1
+      continue
+    }
+  }
+  
+  // Handle case where JSON block extends to end of content
+  if (inJsonBlock && jsonBlockStart !== -1 && cursorLine >= jsonBlockStart) {
+    return {
+      start: jsonBlockStart,
+      end: lines.length - 1,
+      command: currentCommand
+    }
+  }
+  
+  return null
+}
+
+/**
  * Format a single line of JSON
  * @param {string} line - Line to format
  * @returns {string} - Formatted line
@@ -165,19 +267,69 @@ function formatJsonLine(line) {
 }
 
 /**
- * Format JSON text block
+ * Format JSON text block with enhanced structure handling
  * @param {string} text - Text to format
  * @returns {string} - Formatted text
  */
 function formatJsonText(text) {
+  const trimmed = text.trim()
+  if (!trimmed) return text
+  
   try {
     // Try to parse and reformat as JSON
-    const parsed = JSON.parse(text)
+    const parsed = JSON.parse(trimmed)
     return JSON.stringify(parsed, null, 2)
   } catch {
-    // If not valid JSON, just clean up indentation
-    return text.split('\n').map(line => formatJsonLine(line)).join('\n')
+    // If not valid JSON, apply smart indentation based on structure
+    return formatJsonLikeText(trimmed)
   }
+}
+
+/**
+ * Format JSON-like text with proper indentation even if not valid JSON
+ * @param {string} text - Text to format
+ * @returns {string} - Formatted text with proper indentation
+ */
+function formatJsonLikeText(text) {
+  const lines = text.split('\n')
+  const formatted = []
+  let indentLevel = 0
+  const indentSize = 2
+  
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim()
+    if (!line) {
+      formatted.push('')
+      continue
+    }
+    
+    // Decrease indent for closing brackets
+    if (line.startsWith('}') || line.startsWith(']')) {
+      indentLevel = Math.max(0, indentLevel - 1)
+    }
+    
+    // Apply current indentation
+    const indent = ' '.repeat(indentLevel * indentSize)
+    formatted.push(indent + line)
+    
+    // Increase indent for opening brackets
+    if (line.endsWith('{') || line.endsWith('[')) {
+      indentLevel++
+    } else if (line.includes('{') && !line.includes('}')) {
+      // Handle inline object start
+      indentLevel++
+    } else if (line.includes('[') && !line.includes(']')) {
+      // Handle inline array start
+      indentLevel++
+    }
+    
+    // Handle lines that both open and close (like "}")
+    if ((line.endsWith('},') || line.endsWith('},')) && (line.includes('{') || line.includes('['))) {
+      // No change in indent level for self-contained objects/arrays
+    }
+  }
+  
+  return formatted.join('\n')
 }
 
 /**
@@ -191,6 +343,8 @@ export function getEnhancedKeyMap(editor, existingKeys = {}) {
     ...existingKeys,
     'Ctrl-Shift-F': () => smartIndentJson(editor),
     'Alt-Shift-F': () => smartIndentJson(editor), // Alternative for different OS
+    'Ctrl-Shift-I': () => autoIndentJsonBlocks(editor), // Auto-indent entire JSON blocks
+    'Ctrl-Alt-L': () => autoIndentJsonBlocks(editor), // Alternative shortcut
     'Ctrl-/': 'toggleComment', // JSON doesn't support comments, but useful for debugging
   }
 }
