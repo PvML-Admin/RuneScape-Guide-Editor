@@ -236,6 +236,29 @@
     
     // Initialize VS Code-style context menu
     contextMenuCleanup = initContextMenu(editor)
+    
+    // Make editor globally accessible after initialization
+    window.updateEditorContent = function(newContent) {
+      if (editor && typeof editor.setValue === 'function') {
+        try {
+          editor.setValue(newContent)
+          $text = newContent
+          editor.focus()
+          console.log('✅ Global updateEditorContent: Successfully updated editor')
+          return true
+        } catch (error) {
+          console.log('❌ Global updateEditorContent: Error updating editor:', error)
+          return false
+        }
+      }
+      console.log('❌ Global updateEditorContent: Editor not available')
+      return false
+    }
+    
+    // Also make the editor instance globally accessible for advanced use cases
+    window.getEditorInstance = function() {
+      return editor
+    }
   })
 
   // Reactive statement to update editor theme when store changes
@@ -375,11 +398,44 @@
       editor.focus()
     }
   }
+
+  function insertTemplate(event) {
+    if (editor && event.detail) {
+      const template = event.detail
+      const cursor = editor.getCursor()
+      editor.replaceRange('\n' + template + '\n', cursor)
+      editor.focus()
+    }
+  }
+
+  function replaceContent(event) {
+    if (editor && event.detail) {
+      const newContent = event.detail
+      try {
+        editor.setValue(newContent)
+        $text = newContent
+        editor.focus()
+        console.log('✅ replaceContent: Successfully updated editor content')
+      } catch (error) {
+        console.log('❌ replaceContent: Error updating editor:', error)
+        // Fallback: just update the text store
+        $text = newContent
+      }
+    } else {
+      console.log('⚠️ replaceContent: Editor or event detail not available')
+    }
+  }
+
+  // Make editor globally accessible for components that need direct access
+  function getEditorInstance() {
+    return editor
+  }
 </script>
 
 <main>
   <div class="flex flex-col h-screen bg-gray-900">
     <Toolbar
+      {editor}
       on:bold={bold}
       on:italic={italic}
       on:underline={underline}
@@ -397,6 +453,8 @@
       on:command={command}
       on:toggleView={() => (showView = !showView)}
       on:toggleScrollBottom={toggleScrollBottom}
+      on:insertTemplate={insertTemplate}
+      on:replaceContent={replaceContent}
     />
     <div class="flex-grow flex flex-row overflow-auto">
       <div

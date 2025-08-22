@@ -1,0 +1,370 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Discord Content Schema",
+  "description": "Schema for Discord embeds and componentsV2 with validation and help text",
+  "definitions": {
+    "embed": {
+      "type": "object",
+      "description": "Discord embed object for rich content display",
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "type": "string",
+          "maxLength": 256,
+          "description": "The title of the embed (max 256 characters)",
+          "examples": ["Guide Title", "Important Information"]
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL that the title will hyperlink to"
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 4096,
+          "description": "The main content of the embed (max 4096 characters, supports markdown)",
+          "examples": ["This is the main content of the embed.\n\nSupports **markdown** formatting!"]
+        },
+        "color": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 16777215,
+          "description": "Decimal color code for the embed border (0-16777215)",
+          "examples": [39423, 16711680, 65280]
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp for the embed footer",
+          "examples": ["2023-12-01T12:00:00Z"]
+        },
+        "footer": {
+          "type": "object",
+          "description": "Footer information displayed at the bottom",
+          "additionalProperties": false,
+          "properties": {
+            "text": {
+              "type": "string",
+              "maxLength": 2048,
+              "description": "Footer text (max 2048 characters)"
+            },
+            "icon_url": {
+              "type": "string",
+              "format": "uri",
+              "description": "URL for footer icon"
+            }
+          }
+        },
+        "image": {
+          "type": "object",
+          "description": "Large image displayed in the embed",
+          "additionalProperties": false,
+          "properties": {
+            "url": {
+              "type": "string",
+              "format": "uri",
+              "description": "URL of the image"
+            }
+          }
+        },
+        "thumbnail": {
+          "type": "object",
+          "description": "Small image displayed in the top right",
+          "additionalProperties": false,
+          "properties": {
+            "url": {
+              "type": "string",
+              "format": "uri",
+              "description": "URL of the thumbnail image"
+            }
+          }
+        },
+        "author": {
+          "type": "object",
+          "description": "Author information displayed above the title",
+          "additionalProperties": false,
+          "required": ["name"],
+          "properties": {
+            "name": {
+              "type": "string",
+              "maxLength": 256,
+              "description": "Author name (max 256 characters)"
+            },
+            "url": {
+              "type": "string",
+              "format": "uri",
+              "description": "URL that the author name will hyperlink to"
+            },
+            "icon_url": {
+              "type": "string",
+              "format": "uri",
+              "description": "URL for author icon"
+            }
+          }
+        },
+        "fields": {
+          "type": "array",
+          "maxItems": 25,
+          "description": "Array of field objects (max 25 fields)",
+          "items": {
+            "type": "object",
+            "required": ["name", "value"],
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "maxLength": 256,
+                "description": "Field title (max 256 characters)"
+              },
+              "value": {
+                "type": "string",
+                "maxLength": 1024,
+                "description": "Field content (max 1024 characters, supports markdown)"
+              },
+              "inline": {
+                "type": "boolean",
+                "default": false,
+                "description": "Whether this field should display inline with others"
+              }
+            }
+          }
+        }
+      }
+    },
+    "componentsV2": {
+      "type": "object",
+      "description": "Discord ComponentsV2 for interactive elements",
+      "required": ["type"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "integer",
+          "const": 17,
+          "description": "Must be 17 for ComponentsV2"
+        },
+        "accent_color": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 16777215,
+          "description": "Decimal color code for accent elements"
+        },
+        "components": {
+          "type": "array",
+          "maxItems": 40,
+          "description": "Array of component objects (max 40 total)",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/textComponent"
+              },
+              {
+                "$ref": "#/definitions/buttonComponent"
+              },
+              {
+                "$ref": "#/definitions/spacerComponent"
+              },
+              {
+                "$ref": "#/definitions/actionRowComponent"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "textComponent": {
+      "type": "object",
+      "description": "Text component for displaying content",
+      "required": ["type", "content"],
+      "properties": {
+        "type": {
+          "type": "integer",
+          "const": 10,
+          "description": "Must be 10 for text component"
+        },
+        "content": {
+          "type": "string",
+          "description": "Text content (supports markdown)"
+        }
+      }
+    },
+    "buttonComponent": {
+      "type": "object",
+      "description": "Button component for user interaction",
+      "required": ["type", "style", "custom_id"],
+      "properties": {
+        "type": {
+          "type": "integer",
+          "const": 2,
+          "description": "Must be 2 for button component"
+        },
+        "style": {
+          "type": "integer",
+          "enum": [1, 2, 3, 4, 5],
+          "description": "Button style: 1=Primary(blue), 2=Secondary(gray), 3=Success(green), 4=Danger(red), 5=Link"
+        },
+        "custom_id": {
+          "type": "string",
+          "description": "Unique identifier for the button"
+        },
+        "label": {
+          "type": "string",
+          "description": "Text displayed on the button"
+        },
+        "emoji": {
+          "type": "object",
+          "description": "Emoji displayed on the button",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Emoji name or Unicode character"
+            },
+            "id": {
+              "type": "string",
+              "description": "Custom emoji ID (for Discord custom emojis)"
+            },
+            "animated": {
+              "type": "boolean",
+              "description": "Whether the emoji is animated"
+            }
+          }
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL for link-style buttons (style 5)"
+        },
+        "disabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether the button is disabled"
+        }
+      }
+    },
+    "spacerComponent": {
+      "type": "object",
+      "description": "Spacer component for layout control",
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "type": "integer",
+          "const": 14,
+          "description": "Must be 14 for spacer component"
+        },
+        "spacing": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5,
+          "default": 1,
+          "description": "Amount of spacing (1-5)"
+        }
+      }
+    },
+    "actionRowComponent": {
+      "type": "object",
+      "description": "Action row for grouping interactive elements",
+      "required": ["type", "components"],
+      "properties": {
+        "type": {
+          "type": "integer",
+          "const": 1,
+          "description": "Must be 1 for action row"
+        },
+        "components": {
+          "type": "array",
+          "maxItems": 5,
+          "description": "Array of buttons or select menus (max 5 per row)",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/buttonComponent"
+              },
+              {
+                "$ref": "#/definitions/selectMenuComponent"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "selectMenuComponent": {
+      "type": "object",
+      "description": "Select menu component for multiple choices",
+      "required": ["type", "custom_id", "options"],
+      "properties": {
+        "type": {
+          "type": "integer",
+          "const": 3,
+          "description": "Must be 3 for select menu"
+        },
+        "custom_id": {
+          "type": "string",
+          "description": "Unique identifier for the select menu"
+        },
+        "placeholder": {
+          "type": "string",
+          "description": "Placeholder text when nothing is selected"
+        },
+        "min_values": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 25,
+          "default": 1,
+          "description": "Minimum number of selections required"
+        },
+        "max_values": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 25,
+          "default": 1,
+          "description": "Maximum number of selections allowed"
+        },
+        "options": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 25,
+          "description": "Array of option objects (1-25 options)",
+          "items": {
+            "type": "object",
+            "required": ["label", "value"],
+            "properties": {
+              "label": {
+                "type": "string",
+                "maxLength": 100,
+                "description": "Option display text (max 100 characters)"
+              },
+              "value": {
+                "type": "string",
+                "maxLength": 100,
+                "description": "Option value sent when selected (max 100 characters)"
+              },
+              "description": {
+                "type": "string",
+                "maxLength": 100,
+                "description": "Optional description (max 100 characters)"
+              },
+              "emoji": {
+                "type": "object",
+                "description": "Emoji for the option",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Emoji name or Unicode character"
+                  },
+                  "id": {
+                    "type": "string",
+                    "description": "Custom emoji ID"
+                  }
+                }
+              },
+              "default": {
+                "type": "boolean",
+                "default": false,
+                "description": "Whether this option is selected by default"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

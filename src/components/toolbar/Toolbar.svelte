@@ -25,9 +25,12 @@
   import ExportToTxt from './ExportToTxt.svelte'
   import Tutorial from './Tutorial.svelte'
   import ThemeSelector from './ThemeSelector.svelte'
+  import DiscordAssistant from './DiscordAssistant.svelte'
   // Removed JsonModeToggle import - VS Code styling is now default
 
   const dispatch = createEventDispatcher()
+  
+  export let editor = null
 </script>
 
 <div class="flex flex-wrap mt-4 mb-2 mx-2">
@@ -122,6 +125,14 @@
 
   <ButtonGroup>
     <MySavedTemplates></MySavedTemplates>
+  </ButtonGroup>
+
+  <ButtonGroup>
+    <DiscordAssistant 
+      {editor}
+      on:insertTemplate={(e) => dispatch('insertTemplate', e.detail)}
+      on:replaceContent={(e) => dispatch('replaceContent', e.detail)}
+    ></DiscordAssistant>
   </ButtonGroup>
 
   <!-- Removed JSON Mode toggle - VS Code styling is now default -->
