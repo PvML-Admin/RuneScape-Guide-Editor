@@ -21,6 +21,7 @@
   import MySavedTemplates from './MySavedTemplates.svelte'
   import CommandMenu from './CommandMenu.svelte'
   import Help from './Help.svelte'
+  import Info from './Info.svelte'
   import ToggleView from './ToggleView.svelte'
   import ExportToTxt from './ExportToTxt.svelte'
   import Tutorial from './Tutorial.svelte'
@@ -149,6 +150,9 @@
   <div class="inline-flex mb-2 mx-2 ml-auto" role="group">
     <ThemeSelector></ThemeSelector>
     <ToggleView {dispatch} />
-    <Help></Help>
+    <ButtonGroup>
+      <Help></Help>
+      <Info></Info>
+    </ButtonGroup>
   </div>
 </div>

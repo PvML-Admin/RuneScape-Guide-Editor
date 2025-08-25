@@ -20,10 +20,12 @@
       return errors
     }
 
-    // Check total component limit
+    // Check total component limit per ComponentsV2 container
+    // Note: Discord's actual limit is 40 components per MESSAGE (across all ComponentsV2 containers)
+    // But since each .componentsV2:json block creates a separate message, we validate per container
     if (json.components.length > 40) {
       errors.push(
-        `Total components exceed limit: Discord allows maximum 40 components, found ${json.components.length}`
+        `ComponentsV2 container exceeds limit: Discord allows maximum 40 components per message, found ${json.components.length} in this container`
       )
     }
 

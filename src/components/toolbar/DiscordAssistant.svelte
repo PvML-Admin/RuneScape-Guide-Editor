@@ -146,7 +146,7 @@
     },
     'too many components': {
       description: 'Exceeds Discord component limits',
-      solution: 'Max 40 total components, max 5 buttons per action row, max 25 select menu options',
+      solution: 'Max 40 components per message, max 5 buttons per action row, max 25 select menu options',
       example: 'Split into multiple messages or reduce component count'
     }
   }
@@ -319,7 +319,7 @@
           } else if (parsed.type === 17) {
             analysis.push('**Format detected:** ComponentsV2 JSON (consider adding `.componentsV2:json` suffix)')
             if (parsed.components?.length > 40) {
-              analysis.push('**Validation error:** Component count exceeds limit (max 40)')
+              analysis.push('**Validation error:** Component count exceeds limit (max 40 per message)')
             }
           } else {
             analysis.push('**Format detected:** Generic JSON (not Discord-specific)')
@@ -389,7 +389,7 @@
           analysis.push('⚠️ ComponentsV2 must have "type": 17')
         }
         if (componentJson.components?.length > 40) {
-          analysis.push('⚠️ Too many components (max 40)')
+          analysis.push('⚠️ Too many components (max 40 per message)')
         }
       } catch (e) {
         analysis.push(`❌ ComponentsV2 JSON (.componentsV2:json) error: ${e.message}`)
@@ -407,7 +407,7 @@
           analysis.push('⚠️ ComponentsV2 must have "type": 17')
         }
         if (componentJson.components?.length > 40) {
-          analysis.push('⚠️ Too many components (max 40)')
+          analysis.push('⚠️ Too many components (max 40 per message)')
         }
       } catch (e) {
         analysis.push(`❌ ComponentsV2 JSON (.componentsv2) error: ${e.message}`)
@@ -715,7 +715,7 @@ Examples: "basic embed", "fix json", "analyze json", "color codes"`
      <button
      on:click={toggleDropdown}
      title="Discord JSON Assistant - Get help with embeds and components"
-     class="inline-flex items-center rounded {isOpen ? 'bg-gray-700 border-white' : 'bg-gray-700 border-gray-600'} hover:bg-gray-600 text-white px-2 py-2 active:bg-gray-800 text-sm border"
+     class="inline-flex items-center rounded {isOpen ? 'bg-gray-700 border-white' : 'bg-gray-700 border-gray-600'} hover:bg-gray-600 text-white px-2 py-2 active:bg-gray-800 text-sm border h-10"
    >
      <ChatDots />
      <span class="ml-1">Assistant</span>

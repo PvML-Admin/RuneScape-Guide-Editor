@@ -64,7 +64,7 @@
 
 <button
   on:click={exportText}
-  class="inline-flex items-center rounded bg-gray-700 hover:bg-gray-600 text-white px-2 py-2 active:bg-gray-800 text-sm border border-gray-600"
+  class="inline-flex items-center rounded bg-gray-700 hover:bg-gray-600 text-white px-2 py-2 active:bg-gray-800 text-sm border border-gray-600 h-10"
   title="Export to text file"
   type="button"
 >

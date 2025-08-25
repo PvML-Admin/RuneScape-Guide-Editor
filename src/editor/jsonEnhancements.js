@@ -4,6 +4,8 @@
  */
 
 import { initJsonValidation, cleanupJsonValidation } from './jsonValidation.js'
+import { get } from 'svelte/store'
+import { editorTheme } from '../stores/ui.js'
 
 /**
  * Detect if content should use JSON mode
@@ -58,7 +60,7 @@ export function getEnhancedOptions(baseOptions, enableJsonMode = false) {
   return {
     ...baseOptions,
     mode: "vscode-json-enhanced", // Use our enhanced VS Code JSON mode
-    theme: "vscode-json", // Use VS Code-like theme
+    // theme: preserved from baseOptions (don't override)
     foldGutter: true,
     gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
     indentUnit: 2,
@@ -89,7 +91,7 @@ export function toggleJsonMode(editor, enable = true) {
   if (enable) {
     // Enable VS Code-like JSON mode
     editor.setOption('mode', 'vscode-json-enhanced')
-    editor.setOption('theme', 'vscode-json')
+    editor.setOption('theme', get(editorTheme)) // Use current theme from store
     editor.setOption('foldGutter', true)
     editor.setOption('gutters', ["CodeMirror-linenumbers", "CodeMirror-foldgutter"])
     editor.setOption('indentUnit', 2)
@@ -101,9 +103,9 @@ export function toggleJsonMode(editor, enable = true) {
     // Clean up JSON validation
     // cleanupJsonValidation(editor)
     
-    // Revert to basic theme and mode (keeping VS Code as default)
+    // Revert to basic theme and mode (keeping current theme)
     editor.setOption('mode', null)
-    editor.setOption('theme', 'vscode-json')  // Keep VS Code theme even when disabled
+    editor.setOption('theme', get(editorTheme)) // Keep current theme from store
     editor.setOption('foldGutter', false)
     editor.setOption('gutters', ["CodeMirror-linenumbers"])
   }

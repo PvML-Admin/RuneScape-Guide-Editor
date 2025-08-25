@@ -5,72 +5,93 @@ export let channels = {}
 export let users = {}
 export let roles = {}
 
+export let pvmeSpreadsheet = {}
+
 export let channelsFormat = {}
 export let usersFormat = {}
 export let rolesFormat = {}
 export let emojisFormat = {}
 
+export let styleGuide = ''; // doesn't fit here but it is what it is
+
+
 export async function populateConstants() {
-  // Load all constants in parallel with proper error handling
-  const results = await Promise.allSettled([
-    withErrorHandling(() => setEmojis(), 'Loading emojis')
-  ])
-
-  // Check if any critical operations failed
-  const failedOperations = results.filter(
-    (result) => result.status === 'rejected'
-  )
-
-  if (failedOperations.length > 0) {
-    addNotification({
-      type: 'warning',
-      message: `${failedOperations.length} data sources failed to load. Some features may not work correctly.`,
-      duration: 10000
-    })
-  } else {
-    addNotification({
-      type: 'success',
-      message: 'All data sources loaded successfully!',
-      duration: 3000
-    })
-  }
+    // await new Promise(r => setTimeout(r, 2000));
+    await setChannels();
+    await setRoles();
+    await setUsers();
+    await setPvmeSpreadsheet();
+    await setEmojis();
+    await setStyleGuide();  
 }
 
-async function rawGithubGetRequest(url, operationName) {
-  return await fetchWithRetry(url, { method: 'GET' }, operationName, 'api')
+async function rawGithubGetRequest(url) {
+    const res = await fetch(url, {
+        method: 'GET'
+    });
+    
+    if (!res.ok)
+        throw new Error(await res.text());
+
+    return res;
 }
 
-export async function rawGithubTextRequest(
-  url,
-  operationName = 'text request'
-) {
-  const res = await rawGithubGetRequest(url, operationName)
-  return await res.text()
+export async function rawGithubTextRequest(url) {
+    const res = await rawGithubGetRequest(url);
+    return await res.text();
 }
 
-export async function rawGithubJSONRequest(
-  url,
-  operationName = 'JSON request'
-) {
-  const res = await rawGithubGetRequest(url, operationName)
-  return await res.json()
+export async function rawGithubJSONRequest(url) {
+    const res = await rawGithubGetRequest(url);
+    return await res.json();
+}
+
+async function setStyleGuide() {
+    styleGuide = await rawGithubTextRequest('https://raw.githubusercontent.com/pvme/pvme-guides/master/editor-resources/editor-references/style-guide.txt');
+}
+
+async function setPvmeSpreadsheet() {
+    pvmeSpreadsheet = await rawGithubJSONRequest('https://raw.githubusercontent.com/pvme/pvme-settings/settings/pvme-spreadsheet/pvme_spreadsheet.json');
+}
+
+async function setChannels() {
+    const channelsJSON = await rawGithubJSONRequest('https://raw.githubusercontent.com/pvme/pvme-settings/pvme-discord/channels.json');
+    channels = channelsFormat = {};
+    for (const channel of channelsJSON) {
+        channels[channel.id] = channel.name;
+        channelsFormat[channel.name.toLowerCase()] = channel.id;
+    }
+}
+
+async function setRoles() {
+    const rolesJSON = await rawGithubJSONRequest('https://raw.githubusercontent.com/pvme/pvme-settings/pvme-discord/roles.json');
+    roles = rolesFormat = {};
+    for (const role of rolesJSON) {
+        roles[role.id] = role.name;
+        rolesFormat[role.name.toLowerCase()] = role.id;
+    }
+}
+
+async function setUsers() {
+    const usersJSON = await rawGithubJSONRequest('https://raw.githubusercontent.com/pvme/pvme-settings/settings/users/users.json');
+    users = usersFormat = {};
+    for (const user of usersJSON) {
+        users[user.id] = user.name;
+        usersFormat[user.name.toLowerCase()] = user.id;
+    }
 }
 
 async function setEmojis() {
-  const emojisJSON = await rawGithubJSONRequest(
-    'https://raw.githubusercontent.com/pvme/pvme-settings/master/emojis/emojis.json',
-    'emojis'
-  )
-  emojisFormat = {}
-  for (const category of emojisJSON.categories) {
-    for (const emoji of category.emojis) {
-      const emojiFormat = `<:${emoji.emoji_name}:${emoji.emoji_id}>`
-      emojisFormat[emoji.emoji_name] = emojiFormat
-      for (const alias of emoji.aliases) {
-        emojisFormat[alias] = emojiFormat
-      }
+    const emojisJSON = await rawGithubJSONRequest('https://raw.githubusercontent.com/pvme/pvme-settings/master/emojis/emojis.json');
+    emojisFormat = {};
+    for (const category of emojisJSON.categories) {
+        for (const emoji of category.emojis) {
+            const emojiFormat = `<:${emoji.emoji_name}:${emoji.emoji_id}>`;
+            emojisFormat[emoji.emoji_name] = emojiFormat;
+            for (const alias of emoji.aliases) {
+                emojisFormat[alias] = emojiFormat;
+            }
+        }
     }
-  }
-  emojisFormat['wenspore'] =
-    `<:wenarrow:971025697046925362> <:grico:787904334812807238> <:deathsporearrows:900758234527301642>`
+    emojisFormat["wenspore"] = `<:wenarrow:971025697046925362> <:grico:787904334812807238> <:deathsporearrows:900758234527301642>`
 }

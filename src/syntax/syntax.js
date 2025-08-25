@@ -325,7 +325,7 @@ function findSyntaxErrors(text) {
               })
             }
 
-            // Check Discord's 40 component limit
+            // Check Discord's 40 component limit per message
             if (
               json.components &&
               Array.isArray(json.components) &&
@@ -334,7 +334,7 @@ function findSyntaxErrors(text) {
               results.push({
                 line: i + 1,
                 type: 'error',
-                text: `ComponentsV2 exceeds Discord's 40 component limit (found ${json.components.length} components)`
+                text: `ComponentsV2 exceeds Discord's 40 component limit per message (found ${json.components.length} components)`
               })
             }
 

@@ -1,4 +1,4 @@
 <div
   class="avatar-large animate"
-  style="background-image:url(https://i.imgur.com/T2LCaDU.png);"
+  style="background-image:url(https://cdn.discordapp.com/avatars/689197754584399963/00dd46ef9173f512e3070cf12f9d6929.webp?size=128);"
 />

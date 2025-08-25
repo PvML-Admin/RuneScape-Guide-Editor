@@ -54,7 +54,7 @@
   id="CommandButton"
   data-dropdown-toggle="CommandOptions"
   type="button"
-  class="inline-flex items-center rounded {isDropdownOpen ? 'bg-gray-700 border-white' : 'bg-gray-700 border-gray-600'} hover:bg-gray-600 text-white px-2 py-2 active:bg-gray-800 text-sm border"
+  class="inline-flex items-center rounded {isDropdownOpen ? 'bg-gray-700 border-white' : 'bg-gray-700 border-gray-600'} hover:bg-gray-600 text-white px-2 py-2 active:bg-gray-800 text-sm border h-10"
   title="Insert command"
   on:click={handleDropdownToggle}
 >
@@ -113,6 +113,9 @@
       type="button"
     >
       $linkmsg_tagword$
+    </button>
+    <button title="$data_pvme:sheet!A1$" on:click={() => selectCommand('$data_pvme:sheet!A1$')} class='rounded-b flex-wrap text-left bg-gray-700 hover:bg-gray-600 p-2 active:bg-gray-800 border border-gray-600' type="button">
+      $data_pvme:sheet!A1$
     </button>
   </div>
 </div>

@@ -55,7 +55,7 @@
   id="ThemeSelectorButton"
   data-dropdown-toggle="ThemeSelector"
   type="button"
-  class="rounded {isDropdownOpen ? 'bg-gray-700 border-white' : 'bg-gray-700 border-gray-600'} hover:bg-gray-600 text-white px-2 py-2 active:bg-gray-800 text-sm border"
+  class="rounded {isDropdownOpen ? 'bg-gray-700 border-white' : 'bg-gray-700 border-gray-600'} hover:bg-gray-600 text-white px-2 py-2 active:bg-gray-800 text-sm border h-10"
   title="Select Discord theme"
   on:click={handleDropdownToggle}
 >

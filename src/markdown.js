@@ -1,5 +1,5 @@
 import { toHTML, rules, htmlTag } from '@riskymh/discord-markdown'
-import { channels, users, roles } from './pvmeSettings'
+import { channels, users, roles, pvmeSpreadsheet } from './pvmeSettings'
 import markdown from 'simple-markdown'
 import { sanitizeDiscordContent, sanitizeURL } from './utils/sanitizer.js'
 
@@ -98,6 +98,37 @@ rules.url.parse = (capture) => {
   }
 }
 
+String.prototype.replaceAt = function(startIndex, replacement, endIndex) {
+  return this.substring(0, startIndex) + replacement + this.substring(endIndex);
+}
+
+function formatPVMESpreadsheet(originalContent) {
+  // known bug: currently formats prices in code blocks
+  let content = originalContent;
+
+  const regexp = /\$data_pvme:([^$]+)\$/g;
+  const cellRegexp = /^([^!]+)!([A-Za-z]+)(\d+)$/;
+  const results = [...content.matchAll(regexp)];
+  for (const result of results.reverse()) {
+    const [pvmeFormat, cellId] = result;
+    const startIndex = result.index;
+    const endIndex = startIndex + pvmeFormat.length;
+    
+    const cellMatch = cellId.match(cellRegexp);
+    let cellValue;
+    if (cellMatch) {
+      const [_, worksheet, col, row] = cellMatch;
+      cellValue = pvmeSpreadsheet?.cells?.[worksheet]?.[col]?.[row];
+    } else {
+      cellValue = pvmeSpreadsheet?.cell_aliases?.[cellId];
+    }
+
+    if (cellValue)
+      content = content.replaceAt(startIndex, cellValue, endIndex);
+  }
+  return content;
+}
+
 function formatSpecialChannels(originalContent) {
   /* Overide inline code formatting to use discord format.
     FROM:
@@ -154,6 +185,9 @@ export default function markdownToHTML(messageContent, options = {}) {
     embed: true
   })
   console.log('After toHTML:', content)
+
+  // format PVME spreadsheet
+  content = formatPVMESpreadsheet(content)
 
   // format <id:guide> and <id:customize>
   content = formatSpecialChannels(content)

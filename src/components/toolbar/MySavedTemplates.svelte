@@ -283,7 +283,7 @@
   id="MySavedTemplatesButton"
   data-dropdown-toggle="MySavedTemplates"
   type="button"
-  class="inline-flex items-center rounded {isDropdownOpen ? 'bg-gray-700 border-white' : 'bg-gray-700 border-gray-600'} hover:bg-gray-600 text-white px-2 py-2 active:bg-gray-800 text-sm border"
+  class="inline-flex items-center rounded {isDropdownOpen ? 'bg-gray-700 border-white' : 'bg-gray-700 border-gray-600'} hover:bg-gray-600 text-white px-2 py-2 active:bg-gray-800 text-sm border h-10"
   title="My saved templates"
   on:click={handleDropdownToggle}
 >

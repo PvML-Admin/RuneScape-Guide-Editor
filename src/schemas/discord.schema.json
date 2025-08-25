@@ -151,7 +151,7 @@
         "components": {
           "type": "array",
           "maxItems": 40,
-          "description": "Array of component objects (max 40 total)",
+          "description": "Array of component objects (max 40 per message)",
           "items": {
             "oneOf": [
               {
